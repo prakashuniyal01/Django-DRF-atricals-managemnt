@@ -1,64 +1,54 @@
-# models.py
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 
-# Custom User Manager to handle user creation
-class CustomUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **extra_fields):
-        """
-        Create and return a user with the given email, username, and password.
-        """
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        extra_fields.setdefault('is_active', True)  # Ensure active by default
-        user = self.model(username=username, email=email, **extra_fields)
-        user.set_password(password)  # Hash the password
-        user.save(using=self._db)
-        return user
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.core.validators import RegexValidator
 
-    def create_superuser(self, username, email, password=None, **extra_fields):
-        """
-        Create and return a superuser with elevated permissions.
-        """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        if not extra_fields.get('is_staff'):
-            raise ValueError('Superuser must have is_staff=True.')
-        if not extra_fields.get('is_superuser'):
-            raise ValueError('Superuser must have is_superuser=True.')
-
-        return self.create_user(username, email, password, **extra_fields)
-
-# Custom User Model
-class User(AbstractBaseUser, PermissionsMixin):
-    """
-    Custom user model where email and username are unique identifiers
-    for authentication instead of just a username.
-    """
-    USER_ROLES = [
+class User(AbstractUser):
+    ROLE_CHOICES = [
         ('journalist', 'Journalist'),
         ('editor', 'Editor'),
         ('admin', 'Admin'),
         ('user', 'User'),
     ]
-    
-    username = models.CharField(max_length=150, unique=True)
+
+    # Full name field (ensure it is required and not null)
+    full_name = models.CharField(max_length=255, null=False, default="Unknown User")
+
+    # Phone number field with validation for the format
+    number = models.CharField(
+        max_length=15,
+        validators=[
+            RegexValidator(
+                regex=r'^\+?1?\d{9,15}$',
+                message="Phone number must be in the format '+999999999'. Up to 15 digits allowed.",
+            )
+        ],
+        unique=True,
+        null=False,
+        default="+11234567890"
+    )
+
+    # Email is required, and it must be unique
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
-    role = models.CharField(max_length=20, choices=USER_ROLES, default='user')
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
-    last_login = models.DateTimeField(null=True, blank=True)
 
-    objects = CustomUserManager()
+    # Role with predefined choices
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    # Superuser flag (ensure only one superuser exists)
+    is_superuser = models.BooleanField(default=False)
+
+    # Fields that should be required during user creation (excluding username, password)
+    REQUIRED_FIELDS = ['email', 'number', 'full_name']
+
+    def save(self, *args, **kwargs):
+        # Ensure only one superuser exists in the system
+        if self.is_superuser:
+            if not self.pk and User.objects.filter(is_superuser=True).exists():
+                raise ValueError("Only one superuser is allowed.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.username
+        return self.full_name

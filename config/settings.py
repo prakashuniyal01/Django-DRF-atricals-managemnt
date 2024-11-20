@@ -105,16 +105,37 @@ PASSWORD_HASHERS = [
 ]
 
 
+# Email config 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # e.g., smtp.gmail.com
+EMAIL_PORT = 587  # For TLS
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'maan03saab@gmail.com'
+EMAIL_HOST_PASSWORD = 'miow cpse aeom wdmi'
+DEFAULT_FROM_EMAIL = 'maan03saab@gmail.com'
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
+#         'NAME': 'blog_db',  # Database name
+#         'USER': 'root',  # Database username
+#         'PASSWORD': 'Mobiloitte1',  # Database password
+#         'HOST': 'localhost',  # MySQL database host
+#         'PORT': '3306',  # MySQL default port
+#     }
+# }
+
+# my local database home 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
         'NAME': 'blog_db',  # Database name
         'USER': 'root',  # Database username
-        'PASSWORD': 'Mobiloitte1',  # Database password
+        'PASSWORD': 'root',  # Database password
         'HOST': 'localhost',  # MySQL database host
         'PORT': '3306',  # MySQL default port
     }
