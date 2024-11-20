@@ -105,6 +105,40 @@ PASSWORD_HASHERS = [
 ]
 
 
+
+
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+# my local database home 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
+        'NAME': 'article_management',  # Database name
+        'USER': 'root',  # Database username
+        'PASSWORD': 'root',  # Database password
+        'HOST': 'localhost',  # MySQL database host
+        'PORT': '3306',  # MySQL default port
+    }
+}
+
+# my local database office
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
+#         'NAME': 'article_management',  # Database name
+#         'USER': 'root',  # Database username
+#         'PASSWORD': 'Mobiloitte1',  # Database password
+#         'HOST': 'localhost',  # MySQL database host
+#         'PORT': '3306',  # MySQL default port
+#     }
+# }
+
+
+# Email Backend for development (using console for testing)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Email config 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # e.g., smtp.gmail.com
@@ -113,38 +147,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'maan03saab@gmail.com'
 EMAIL_HOST_PASSWORD = 'miow cpse aeom wdmi'
 DEFAULT_FROM_EMAIL = 'maan03saab@gmail.com'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-#         'NAME': 'blog_db',  # Database name
-#         'USER': 'root',  # Database username
-#         'PASSWORD': 'Mobiloitte1',  # Database password
-#         'HOST': 'localhost',  # MySQL database host
-#         'PORT': '3306',  # MySQL default port
-#     }
-# }
-
-# my local database home 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'blog_db',  # Database name
-        'USER': 'root',  # Database username
-        'PASSWORD': 'root',  # Database password
-        'HOST': 'localhost',  # MySQL database host
-        'PORT': '3306',  # MySQL default port
-    }
-}
-
-
-# Email Backend for development (using console for testing)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
