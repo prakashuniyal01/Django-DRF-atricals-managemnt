@@ -130,12 +130,12 @@ class PasswordChangeSerializer(serializers.Serializer):
 
         # Check if new password and confirm password match
         if new_password != confirm_password:
-            raise serializers.ValidationError({"confirm_password": _("New password and confirm password do not match.")})
+            raise serializers.ValidationError({"confirm_password": ("New password and confirm password do not match.")})
 
         # Check if old password is correct
         user = self.context['request'].user
         if not user.check_password(old_password):
-            raise serializers.ValidationError({"old_password": _("Old password is incorrect.")})
+            raise serializers.ValidationError({"old_password": ("Old password is incorrect.")})
 
         # Validate new password against Django's password validators
         try:
