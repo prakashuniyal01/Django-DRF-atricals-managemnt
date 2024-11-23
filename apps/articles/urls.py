@@ -1,9 +1,6 @@
-
-from django.contrib import admin
 from django.urls import path
-
+from .views import ArticleCreateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('')
+    path('articles/', ArticleCreateView.as_view(), name='article-create'),
 ]
