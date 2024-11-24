@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'drf_yasg',  # Add drf-yasg for API documentation
     'apps.users',
-    'apps.articles'
+    'apps.article'
 ]
 
 
