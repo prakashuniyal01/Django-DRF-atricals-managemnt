@@ -115,7 +115,7 @@ PASSWORD_HASHERS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'article_management',  # Database name
+        'NAME': 'article',  # Database name
         'USER': 'root',  # Database username
         'PASSWORD': 'root',  # Database password
         'HOST': 'localhost',  # MySQL database host
