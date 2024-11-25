@@ -1,10 +1,12 @@
 # serializers.py
 import re
+import random
+from django.core.mail import send_mail
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.exceptions import ValidationError
-from .models import User
+from .models import User, OTP
 from django.contrib.auth.password_validation import validate_password
 
 # User registration serializer
@@ -67,15 +69,94 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
 
     def create(self, validated_data):
-        """ Create the user and remove the confirm_password field """
+        """ Create the user and set `is_active` to False until OTP is verified """
         try:
             validated_data.pop('confirm_password')
-            user = User.objects.create_user(**validated_data)
+            # Set user as inactive initially
+            user = User.objects.create_user(
+                email=validated_data['email'],
+                number=validated_data['number'],
+                full_name=validated_data['full_name'],
+                role=validated_data['role'],
+                is_active=False,  # Inactive by default
+            )
+            user.set_password(validated_data['password'])
+            user.save()
+
+            # Generate and store OTP
+            otp_code = str(random.randint(100000, 999999))
+            OTP.objects.create(user=user, otp=otp_code)
+
+            # Send OTP email
+            self.send_otp_email(user, otp_code)
+
             return user
+
         except ValidationError as e:
             raise serializers.ValidationError(f"Validation Error: {str(e)}")
         except Exception as e:
             raise serializers.ValidationError(f"Error creating user: {str(e)}")
+
+    def send_otp_email(self, user, otp_code):
+        """ Utility function to send OTP via email """
+        subject = "Account Verification OTP"
+        message = f"Hello {user.full_name},\n\nYour OTP for account verification is: {otp_code}.\nIt is valid for 10 minutes."
+        from_email = "maan03saab@gmail.com"  # Replace with your email
+        recipient_list = [user.email]
+
+        send_mail(subject, message, from_email, recipient_list)
+        
+    def send_account_creation_email(self, user):
+        """ Send account creation details via email """
+        subject = "Welcome to Our Platform!"
+        message = (
+            f"Dear {user.full_name},\n\n"
+            f"Thank you for registering on our platform.\n"
+            f"Here are your account details:\n\n"
+            f"Full Name: {user.full_name}\n"
+            f"Email: {user.email}\n"
+            f"Phone Number: {user.number}\n"
+            f"Role: {user.role}\n\n"
+            f"Please verify your account using the OTP sent earlier."
+        )
+        from_email = "maan03saab@gmail.com"  # Replace with your email
+        recipient_list = [user.email]
+
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+        except Exception as e:
+            raise serializers.ValidationError(f"Error sending account creation email: {str(e)}")
+        
+
+class OTPVerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
+
+    def validate(self, data):
+        try:
+            user = User.objects.get(email=data['email'])
+            otp_entry = OTP.objects.filter(user=user).last()
+
+            if not otp_entry or otp_entry.otp != data['otp']:
+                raise serializers.ValidationError("Invalid or expired OTP.")
+
+            if not otp_entry.is_valid():
+                raise serializers.ValidationError("OTP has expired. Please request a new one.")
+
+            return data
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with this email does not exist.")
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
+
+    def save(self):
+        """ Activate the user after successful OTP validation """
+        email = self.validated_data['email']
+        user = User.objects.get(email=email)
+        user.is_active = True  # Activate the user
+        user.save()
+
+        return user
 
 # User login serializer
 class LoginSerializer(serializers.Serializer):

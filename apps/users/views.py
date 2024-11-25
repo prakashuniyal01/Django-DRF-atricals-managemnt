@@ -15,13 +15,14 @@ from datetime import timedelta
 from django.utils.timezone import now
 from django.conf import settings
 from .models import User,OTP
-from .serializers import UserRegistrationSerializer, LoginSerializer, UserUpdateSerializer,PasswordChangeSerializer,SendOtpSerializer, VerifyOtpSerializer
+from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, LoginSerializer, UserUpdateSerializer,PasswordChangeSerializer,SendOtpSerializer, VerifyOtpSerializer
 from django.utils.translation import gettext_lazy as _
+import logging
 
-
+logger = logging.getLogger(__name__)
 # user registration view
 class UserRegisterView(APIView):
-   def post(self, request):
+    def post(self, request):
         try:
             serializer = UserRegistrationSerializer(data=request.data)
             if serializer.is_valid():
@@ -30,6 +31,34 @@ class UserRegisterView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class OTPVerificationView(APIView):
+    def post(self, request):
+        serializer = OTPVerificationSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+                # Save the validated data and activate the user
+                user = serializer.save()
+
+                logger.info(f"User {user.email} successfully verified their account.")
+                return Response(
+                    {"message": "Account verified successfully.", "user": user.email},
+                    status=status.HTTP_200_OK,
+                )
+
+            except Exception as e:
+                logger.error(f"Unexpected error during OTP verification for {request.data.get('email')}: {str(e)}")
+                return Response(
+                    {"error": "An unexpected error occurred. Please try again later."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        # If serializer is not valid, return errors
+        logger.warning(f"OTP verification failed for {request.data.get('email')}: {serializer.errors}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 # user login views
 class LoginView(APIView):

@@ -1,48 +1,36 @@
-# from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
-from django.contrib.admin import AdminSite
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
-from .models import Article, Tag, Category
+from .models import Article, Tag, Category, Comment, Like
 
-
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
-    """
-    Custom admin configuration for the Article model.
-    """
-    list_display = ('title', 'author', 'status', 'publish_date')
-    list_filter = ('status', 'publish_date', 'categories')  # 'categories' is ManyToManyField
-    search_fields = ('title', 'content')
-    filter_horizontal = ('tags', 'categories')  # Enables selection of ManyToMany fields
-
-    def get_queryset(self, request):
-        """
-        Override the queryset to handle filtering or annotations, if needed.
-        """
-        queryset = super().get_queryset(request)
-        return queryset.prefetch_related('tags', 'categories')  # Optimize for related fields
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """
-    Custom admin configuration for the Tag model.
-    """
     list_display = ('name',)
-    search_fields = ('name',)
 
+@admin.register(Article)    
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'author', 'status', 'publish_date']  # Customize which fields to display
+    search_fields = ['title', 'author__email']  # Allow search by title and author email
+    list_filter = ['status', 'publish_date']  # Filter by status and publish date
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    """
-    Custom admin configuration for the Category model.
-    """
-    list_display = ('name',)
-    search_fields = ('name',)
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'author', 'article', 'content', 'parent', 'edited', 'created_at', 'updated_at']
+    search_fields = ['author__email', 'content']  # Allow searching by author email and content
+    list_filter = ['edited', 'created_at']  # Enable filtering by edited status and created time
+    
+    
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'article', 'created_at']  # Customize fields to display
+    search_fields = ['user__email', 'article__title']  # Allow searching by user email and article title
+    list_filter = ['created_at']  # Enable filtering by creation date
 
-
-# No need to call `admin.site.register` again for these models
-admin.site.register(Article)
-admin.site.register(Tag)
-admin.site.register(Category)
+admin.site.register(Article, ArticleAdmin)  # Register the model with custom admin options
+admin.site.register(Tag,TagAdmin)  # Register other models like Tag, if necessary
+admin.site.register(Category, CategoryAdmin)  # If you have a Category model
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(Like, LikeAdmin)
