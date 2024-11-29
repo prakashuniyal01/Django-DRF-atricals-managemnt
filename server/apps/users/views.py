@@ -215,22 +215,39 @@ class SendOtpView(APIView):
         serializer = SendOtpSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
-            user = User.objects.get(email=email)
+            try:
+                user = User.objects.get(email=email)
 
-            # Generate OTP
-            otp = str(random.randint(100000, 999999))
-            OTP.objects.create(user=user, otp=otp)
+                # Check for an existing OTP
+                otp_record = OTP.objects.filter(user=user).order_by('-created_at').first()
 
-            # Send OTP via email
-            send_mail(
-                subject="Password Reset OTP",
-                message=f"Your OTP for password reset is: {otp}",
-                from_email="your-email@gmail.com",
-                recipient_list=[email],
-            )
-            return Response({"message": "OTP sent to your email."}, status=status.HTTP_200_OK)
+                if otp_record and otp_record.created_at > now() - timedelta(minutes=10):
+                    time_remaining = 600 - int((now() - otp_record.created_at).total_seconds())
+                    return Response(
+                        {
+                            "detail": f"OTP has already been sent. Please wait {time_remaining} seconds before requesting a new OTP."
+                        },
+                        status=status.HTTP_429_TOO_MANY_REQUESTS,
+                    )
+
+                # Generate new OTP
+                otp = str(random.randint(100000, 999999))
+                OTP.objects.create(user=user, otp=otp)
+
+                # Send OTP via email
+                send_mail(
+                    subject="Password Reset OTP",
+                    message=f"Your OTP for password reset is: {otp}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                )
+                return Response({"message": "OTP sent to your email."}, status=status.HTTP_200_OK)
+
+            except User.DoesNotExist:
+                return Response({"detail": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class VerifyOtpView(APIView):
@@ -260,21 +277,20 @@ class ResendOTPView(APIView):
             return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Ensure the user exists
             user = User.objects.get(email=email)
 
             # Check if an OTP already exists for the user
             otp_record = OTP.objects.filter(user=user).order_by('-created_at').first()
 
-            if otp_record and otp_record.created_at > now() - timedelta(minutes=2):
-                time_remaining = 120 - int((now() - otp_record.created_at).total_seconds())
+            if otp_record and otp_record.created_at > now() - timedelta(minutes=1.5):
+                time_remaining = 90 - int((now() - otp_record.created_at).total_seconds())
                 return Response(
                     {"detail": f"Please wait {time_remaining} seconds before requesting a new OTP."},
                     status=status.HTTP_429_TOO_MANY_REQUESTS,
                 )
 
-            # Generate a new OTP using random
-            new_otp = str(random.randint(100000, 999999))  # Generate a 6-digit random OTP
+            # Generate new OTP
+            new_otp = str(random.randint(100000, 999999))
 
             # Save the new OTP in the database
             OTP.objects.create(user=user, otp=new_otp)
