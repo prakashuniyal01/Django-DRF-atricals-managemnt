@@ -28,10 +28,7 @@ Manages user accounts, including authentication and roles.
 
 CREATE TABLE auth_user (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(128) NOT NULL,
-    full_name varchar(255) NOT NULL,
-    number VARCHAR(255) NOT NULL,
     email VARCHAR(254) UNIQUE,
     is_staff BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,

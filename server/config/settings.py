@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +46,10 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'drf_yasg',  # Add drf-yasg for API documentation
     'apps.users',
-    'apps.article'
+    'apps.articles',  # Added missing comma
+    'cloudinary',
+    'cloudinary_storage',
+    'corsheaders',
 ]
 
 
@@ -75,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # cors middleware     
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -115,7 +122,7 @@ PASSWORD_HASHERS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-        'NAME': 'article',  # Database name
+        'NAME': 'articledb',  # Database name
         'USER': 'root',  # Database username
         'PASSWORD': 'root',  # Database password
         'HOST': 'localhost',  # MySQL database host
@@ -127,7 +134,7 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-#         'NAME': 'article_management',  # Database name
+#         'NAME': 'articlesDB',  # Database name
 #         'USER': 'root',  # Database username
 #         'PASSWORD': 'Mobiloitte1',  # Database password
 #         'HOST': 'localhost',  # MySQL database host
@@ -191,3 +198,24 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Add your Cloudinary credentials
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'article management',
+    'API_KEY': '622646197184647',
+    'API_SECRET': 'E32aRgeIktXhsmWR7FJ0nK3tGfs',
+}
+
+# cloudinary setups 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# cors hadder 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Vite development server
+    "http://127.0.0.1:5173", # Alternative localhost
+    "http://localhost:8001",  # Vite development server
+    "http://127.0.0.1:8001", # Alternative localhost
+    "http://localhost:8080",  # Vite development server
+    "http://127.0.0.1:8080", # Alternative localhost
+]
