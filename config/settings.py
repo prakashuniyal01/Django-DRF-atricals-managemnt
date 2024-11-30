@@ -46,6 +46,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_URL = 'http://172.16.6.94:8000'
 
 # Application definition
 
@@ -104,7 +105,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'dashboard/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
