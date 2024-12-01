@@ -19,21 +19,35 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
+        
+class ReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'author', 'content', 'created_at', 'edited')
 
+class CommentSerializer(serializers.ModelSerializer):
+    replies = ReplySerializer(many=True, read_only=True)
+    likes_count = serializers.IntegerField(source="likes.count", read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'article', 'author', 'content', 'replies', 'likes_count', 'edited', 'created_at', 'updated_at')
+        read_only_fields = ('author', 'likes_count', 'edited', 'created_at', 'updated_at')
 
 class ArticleSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     categories = CategorySerializer(many=True, read_only=True)
     author_name = serializers.CharField(source='author.full_name', read_only=True)  # Add author name
     author_email = serializers.EmailField(source='author.email', read_only=True)  # Add author email
-    
+    comments = CommentSerializer(many=True, read_only=True)  # Add nested comments
+    # image_url = serializers.URLField(source='image_url', read_only=True)
 
     class Meta:
         model = Article
         fields = [
             'id', 'author_name', 'author_email', 'title', 'subtitle', 'content', 'status',
-            'publish_date', 'categories', 'tags', 'approved_at'
-        ]
+            'publish_date', 'categories', 'tags', 'approved_at', 'comments' , 'image_url'
+        ]   
 
 
 class ArticleCreateUpdateSerializer(serializers.ModelSerializer):
@@ -98,19 +112,8 @@ class ArticleCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ReplySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ('id', 'author', 'content', 'created_at', 'edited')
 
-class CommentSerializer(serializers.ModelSerializer):
-    replies = ReplySerializer(many=True, read_only=True)
-    likes_count = serializers.IntegerField(source="likes.count", read_only=True)
 
-    class Meta:
-        model = Comment
-        fields = ('id', 'article', 'author', 'content', 'replies', 'likes_count', 'edited', 'created_at', 'updated_at')
-        read_only_fields = ('author', 'likes_count', 'edited', 'created_at', 'updated_at')
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:

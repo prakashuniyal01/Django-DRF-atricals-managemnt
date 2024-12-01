@@ -179,13 +179,16 @@ class CommentView(APIView):
     def post(self, request, article_id):
         try:
             article = get_object_or_404(Article, id=article_id)
+            
+            # Ensure 'author' and 'article' are set
             data = request.data.copy()
-            data['author'] = request.user.id
-            data['article'] = article.id
+            data['author'] = request.user.id  # Use authenticated user's ID as the author
+            data['article'] = article.id     # Associate the comment with the article
 
+            # Serialize and validate the data
             serializer = CommentSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(author=request.user)  # Explicitly set the author
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -193,6 +196,7 @@ class CommentView(APIView):
                 "error": "An unexpected error occurred while adding the comment.",
                 "details": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def patch(self, request, comment_id):
         try:

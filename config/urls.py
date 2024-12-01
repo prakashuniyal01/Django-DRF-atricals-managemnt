@@ -21,7 +21,7 @@ urlpatterns = [
     path('', lambda request: render(request, 'home.html'), name='home'),
     path('admin/', admin.site.urls),
     path('users/', include('apps.users.urls')),
-    path('articles', include('apps.articles.urls')),
+    path('articles/', include('apps.articles.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc'),
 ]

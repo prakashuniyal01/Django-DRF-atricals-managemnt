@@ -3,6 +3,8 @@ from django.utils.timezone import now
 from django.conf import settings
 
 User = settings.AUTH_USER_MODEL
+
+
 class Category(models.Model):
     """
     Represents an article category.
@@ -39,10 +41,9 @@ class Article(models.Model):
     subtitle = models.CharField(max_length=200, null=True, blank=True)
     content = models.TextField()
     author = models.ForeignKey(
-        # settings.AUTH_USER_MODEL, 
         User,
-        on_delete=models.SET_NULL, 
-        null=True, 
+        on_delete=models.SET_NULL,
+        null=True,
         related_name='articles'
     )
     image_url = models.URLField(null=True, blank=True)
@@ -50,25 +51,24 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(
-        max_length=10, 
-        choices=STATUS_CHOICES, 
+        max_length=10,
+        choices=STATUS_CHOICES,
         default='draft'
     )
     reviewed_by = models.ForeignKey(
-        # settings.AUTH_USER_MODEL, 
         User,
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='reviewed_articles'
     )
     approved_at = models.DateTimeField(null=True, blank=True)
     categories = models.ManyToManyField(
-        'Category', 
+        'Category',
         related_name='articles'
     )
     tags = models.ManyToManyField(
-        'Tag', 
+        'Tag',
         related_name='articles'
     )
     deleted_at = models.DateTimeField(null=True, blank=True)
@@ -84,12 +84,18 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
     class Meta:
         ordering = ['-created_at']
 
 
-
 class Comment(models.Model):
+    """
+    Represents a comment on an article.
+    """
     article = models.ForeignKey(Article, related_name="comments", on_delete=models.CASCADE)
     author = models.ForeignKey(User, related_name="comments", on_delete=models.CASCADE)
     content = models.TextField()
@@ -97,23 +103,63 @@ class Comment(models.Model):
     edited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Automatically set `edited` if the content is modified.
+        """
+        if self.pk and self.content:
+            original = Comment.objects.get(pk=self.pk)
+            if original.content != self.content:
+                self.edited = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Comment by {self.author} on {self.article}"
-    
+
+
 class Like(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="likes")
-    article = models.ForeignKey('Article', on_delete=models.CASCADE, related_name="likes")
-    comment = models.ForeignKey('Comment', null=True, blank=True, on_delete=models.CASCADE, related_name="likes")  # New comment field
+    """
+    Represents a like on an article or comment.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+    article = models.ForeignKey('Article', on_delete=models.CASCADE, related_name="likes", null=True, blank=True)
+    comment = models.ForeignKey('Comment', null=True, blank=True, on_delete=models.CASCADE, related_name="likes")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Enforce unique constraints for likes on either an article or a comment.
+        """
+        if self.article and self.comment:
+            raise ValueError("A like cannot be linked to both an article and a comment.")
+        
+        if self.article:
+            if Like.objects.filter(user=self.user, article=self.article).exists():
+                raise ValueError("You have already liked this article.")
+        
+        if self.comment:
+            if Like.objects.filter(user=self.user, comment=self.comment).exists():
+                raise ValueError("You have already liked this comment.")
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
         if self.comment:
             return f"Like by {self.user} on Comment {self.comment.id}"
         return f"Like by {self.user} on Article {self.article.id}"
 
+
     class Meta:
-        # If 'comment' is provided, ensure a user can only like a specific comment or article once.
-        unique_together = ('user', 'article', 'comment')  # One like per user per article/comment
-        # You could adjust the constraint as per your requirements, e.g., if likes are allowed only on articles
-        # unique_together = ('user', 'article')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'article'],
+                condition=models.Q(comment=None),
+                name='unique_article_like'
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'comment'],
+                name='unique_comment_like'
+            )
+        ]
