@@ -46,30 +46,6 @@
     </header>
 
     <main class="container my-5">
-        <!-- Hero Section -->
-        <section class="hero text-center mb-5">
-            <h1>Welcome to Article Management System</h1>
-            <p>Manage your articles with ease. Login or register to get started.</p>
-            <div class="cta-buttons">
-                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-                <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
-            </div>
-        </section>
-
-        <!-- Filters Section -->
-        <section class="filters mb-4">
-            <div class="row">
-                {% for filter, placeholder in filters.items %}
-                <div class="col-md-6">
-                    <select id="{{ filter }}-filter" class="form-select">
-                        <option value="">{{ placeholder }}</option>
-                        <!-- Dynamically populate options -->
-                    </select>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
         <!-- Articles Section -->
         <section>
             <h2 class="mb-4">Articles</h2>
@@ -95,6 +71,7 @@
             let page = 1;
             const limit = 5;
 
+            // Function to fetch data from the API
             async function fetchData(url) {
                 try {
                     const response = await fetch(url);
@@ -106,6 +83,7 @@
                 }
             }
 
+            // Function to load articles
             async function loadArticles() {
                 const url = `/articles/?page=${page}&limit=${limit}`;
                 const articles = await fetchData(url);
@@ -117,8 +95,9 @@
                 }
             }
 
+            // Function to render articles as cards
             function renderArticles(articles) {
-                const createCard = ({ image_url, title, subtitle, author_name, categories, tags, likes_count, comments }) => `
+                const createCard = ({ image_url, title, subtitle, author_name, categories, tags, likes_count, comments, id }) => `
                     <div class="col">
                         <div class="card h-100">
                             <img src="${image_url || 'https://via.placeholder.com/300'}" alt="Image" class="card-img-top">
@@ -132,13 +111,15 @@
                             <div class="card-footer d-flex justify-content-between">
                                 <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${likes_count || 0}</button>
                                 <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${comments.length || 0}</button>
+                                <a href="/articles/${id}/" class="btn btn-primary">Read More</a> <!-- Link to article details -->
                             </div>
                         </div>
                     </div>`;
+
                 articles.forEach(article => articlesContainer.innerHTML += createCard(article));
             }
 
-            // Event Listeners
+            // Event listener for "Load More"
             loadMoreButton.addEventListener('click', loadArticles);
 
             // Initial Load

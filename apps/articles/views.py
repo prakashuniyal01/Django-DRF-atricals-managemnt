@@ -4,13 +4,17 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Comment, Like, Article
 from .serializers import ArticleSerializer, ArticleCreateUpdateSerializer, CommentSerializer, LikeSerializer
-from .permissions import IsAdminOrJournalist, IsEditorOrAdmin
+from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.db import IntegrityError
 
 
+class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    permission_classes = [IsAdminOrEditor] 
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     """
