@@ -21,6 +21,28 @@ import logging
 
 logger = logging.getLogger(__name__)
 # user registration view
+
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """ Retrieve the current user's details """
+        user = request.user
+        serializer = UserUpdateSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        """ Update the current user's details """
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserRegisterView(APIView):
     def post(self, request):
         try:
@@ -312,3 +334,4 @@ class ResendOTPView(APIView):
                 {"detail": "An error occurred while processing your request.", "error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+ 
