@@ -1,0 +1,335 @@
+{% extends 'base.html' %} {% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <h3 class="text-center mb-4">Register</h3>
+    <form id="registerForm">
+      <div class="mb-3">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="fullName"
+          placeholder="Enter your full name"
+          oninput="validateFullName()"
+          required
+        />
+        <small class="text-danger" id="fullNameError"></small>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="Enter your email"
+          oninput="validateEmail()"
+          required
+        />
+        <small class="text-danger" id="emailError"></small>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Enter your password"
+          oninput="validatePassword()"
+          required
+        />
+        <small class="text-danger" id="passwordError"></small>
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="confirmPassword"
+          placeholder="Confirm your password"
+          oninput="validateConfirmPassword()"
+          required
+        />
+        <small class="text-danger" id="confirmPasswordError"></small>
+      </div>
+      <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <select class="form-select" id="role" required>
+          <option value="admin">Admin</option>
+          <option value="editor">Editor</option>
+          <option value="journalist">Journalist</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="number" class="form-label">Mobile Number</label>
+        <input
+          type="number"
+          class="form-control"
+          id="number"
+          placeholder="Enter your mobile number"
+          oninput="validatePhoneNumber()"
+          required
+        />
+        <small class="text-danger" id="numberError"></small>
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary w-100"
+        onclick="registerUser()"
+      >
+        Register
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- OTP Verification Modal -->
+<div
+  class="modal fade"
+  id="otpModal"
+  tabindex="-1"
+  aria-labelledby="otpModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="otpModalLabel">Verify OTP</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="otpForm">
+          <div class="mb-3">
+            <label for="otpEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="otpEmail" readonly />
+          </div>
+          <div class="mb-3">
+            <label for="otp" class="form-label">Enter OTP</label>
+            <input
+              type="text"
+              class="form-control"
+              id="otp"
+              placeholder="Enter OTP"
+              required
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn-success w-100"
+            onclick="verifyOTP()"
+          >
+            Verify OTP
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  id="loader"
+  style="
+    display: none;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  "
+>
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+<script>
+  // Function to show loader
+  function showLoader() {
+    document.getElementById("loader").style.display = "block";
+  }
+
+  // Function to hide loader
+  function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+  }
+  function validateFullName() {
+    const fullName = document.getElementById("fullName").value;
+    const errorField = document.getElementById("fullNameError");
+    if (fullName.length < 3) {
+      errorField.textContent = "Full name must be at least 3 characters.";
+    } else {
+      errorField.textContent = "";
+    }
+  }
+
+  function validateEmail() {
+    const email = document.getElementById("email").value;
+    const errorField = document.getElementById("emailError");
+
+    // Combined regex for email structure validation
+    const emailRegex =
+      /^[a-zA-Z0-9]+([._%+-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+
+    // Additional checks
+    const invalidCharRegex = /[^a-zA-Z0-9@._%+-]/; // Invalid characters
+    const consecutiveDotRegex = /(\.\.)/; // Consecutive dots
+    const domainPart = email.split("@")[1]; // Extract domain after '@'
+    const usernamePart = email.split("@")[0]; // Extract username before '@'
+
+    // Length constraints
+    const maxLength = 320; // Max email length (RFC 5321)
+    const maxUsernameLength = 64; // Max username length
+    const maxDomainLength = 255; // Max domain length
+
+    // Validation Checks
+    if (!emailRegex.test(email)) {
+      errorField.textContent = "Invalid email format.";
+    } else if (invalidCharRegex.test(email)) {
+      errorField.textContent =
+        "Email contains invalid characters. Only '@', '.', '_', '-', and alphanumeric characters are allowed.";
+    } else if (consecutiveDotRegex.test(email)) {
+      errorField.textContent = "Email contains consecutive dots (e.g., '..').";
+    } else if (email.length > maxLength) {
+      errorField.textContent = `Email exceeds maximum length of ${maxLength} characters.`;
+    } else if (usernamePart.length > maxUsernameLength) {
+      errorField.textContent = `Username part exceeds maximum length of ${maxUsernameLength} characters.`;
+    } else if (domainPart && domainPart.length > maxDomainLength) {
+      errorField.textContent = `Domain part exceeds maximum length of ${maxDomainLength} characters.`;
+    } else if (!domainPart || domainPart.indexOf(".") === -1) {
+      errorField.textContent =
+        "Domain must contain at least one dot (e.g., 'example.com').";
+    } else if (domainPart.startsWith("-") || domainPart.endsWith("-")) {
+      errorField.textContent =
+        "Domain cannot start or end with a hyphen ('-').";
+    } else {
+      errorField.textContent = ""; // Email is valid
+    }
+  }
+
+  function validatePassword() {
+    const password = document.getElementById("password").value;
+    const errorField = document.getElementById("passwordError");
+    const upperCaseRegex = /[A-Z]/;
+    if (!upperCaseRegex.test(password)) {
+      errorField.textContent =
+        "Password must contain at least one uppercase letter.";
+    } else {
+      errorField.textContent = "";
+    }
+  }
+
+  function validateConfirmPassword() {
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const errorField = document.getElementById("confirmPasswordError");
+    if (password !== confirmPassword) {
+      errorField.textContent = "Passwords do not match.";
+    } else {
+      errorField.textContent = "";
+    }
+  }
+
+  function validatePhoneNumber() {
+    const number = document.getElementById("number").value;
+    const errorField = document.getElementById("numberError");
+    const phoneRegex = /^\+?[0-9]{1,15}$/;
+    if (!phoneRegex.test(number)) {
+      errorField.textContent =
+        "Phone number must be in the format '+999999999'.";
+    } else {
+      errorField.textContent = "";
+    }
+  }
+
+  function registerUser() {
+    const data = {
+      full_name: document.getElementById("fullName").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      confirm_password: document.getElementById("confirmPassword").value,
+      role: document.getElementById("role").value,
+      number: document.getElementById("number").value,
+    };
+    showLoader();
+    fetch("/users/register/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // If the response is not ok, parse the JSON for errors
+          return response.json().then((data) => {
+            throw data.errors; // Throw the errors for handling in catch block
+          });
+        }
+        return response.json(); // Success
+      })
+      .then((data) => {
+        hideLoader();
+        if (data.message) {
+          // Show OTP modal on successful registration
+          document.getElementById("otpEmail").value =
+            document.getElementById("email").value;
+          const otpModal = new bootstrap.Modal(
+            document.getElementById("otpModal")
+          );
+          otpModal.show();
+        }
+      })
+      .catch((errors) => {
+        hideLoader();
+        // Handle errors and display as alerts
+        if (typeof errors === "string") {
+          alert(errors); // For general errors
+        } else if (typeof errors === "object") {
+          // Loop through each error and display them
+          Object.keys(errors).forEach((key) => {
+            alert(`${key}: ${errors[key]}`);
+          });
+        } else {
+          alert("An unexpected error occurred. Please try again.");
+        }
+      });
+  }
+
+  function verifyOTP() {
+    // Show loader
+    showLoader();
+
+    const data = {
+      email: document.getElementById("otpEmail").value,
+      otp: document.getElementById("otp").value,
+    };
+
+    fetch("/users/register-verify-otp/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Hide loader
+        hideLoader();
+
+        if (data.message) {
+          alert("OTP Verified Successfully!");
+          window.location.href = "/users/login-page/";
+        } else {
+          // Show server-side error
+          alert("Error: " + JSON.stringify(data));
+        }
+      })
+      .catch((error) => {
+        // Hide loader
+        hideLoader();
+        // Show network or unexpected errors
+        alert("Unexpected error occurred: " + error);
+      });
+  }
+</script>
+{% endblock %}

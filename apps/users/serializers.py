@@ -179,15 +179,19 @@ class LoginSerializer(serializers.Serializer):
 
 # Update user serializer
 class UserUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True) 
     class Meta:
         model = User
-        fields = ['full_name', 'email', 'number']  # Fields you want to allow updates on
+        fields = ['id','full_name', 'email', 'number','role', 'is_active', 'is_staff']  # Fields you want to allow updates on
 
     def update(self, instance, validated_data):
         try:
             instance.full_name = validated_data.get('full_name', instance.full_name)
             instance.email = validated_data.get('email', instance.email)
             instance.number = validated_data.get('number', instance.number)
+            instance.role = validated_data.get('role', instance.role)
+            instance.is_active = validated_data.get('is_active', instance.is_active)
+            instance.is_staff = validated_data.get('is_staff', instance.is_staff)
 
             instance.save()
             return instance

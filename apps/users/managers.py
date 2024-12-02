@@ -3,6 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+        
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         """

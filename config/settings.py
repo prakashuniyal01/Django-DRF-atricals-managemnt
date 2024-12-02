@@ -146,18 +146,18 @@ DATABASES = {
     }
 }
 
+
 # my local database office
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',  # Use MySQL database engine
-#         'NAME': 'articlesDB',  # Database name
+#         'NAME': 'articlesDBs',  # Database name
 #         'USER': 'root',  # Database username
 #         'PASSWORD': 'Mobiloitte1',  # Database password
 #         'HOST': 'localhost',  # MySQL database host
 #         'PORT': '3306',  # MySQL default port
 #     }
 # }
-
 
 # Email Backend for development (using console for testing)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

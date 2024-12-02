@@ -280,3 +280,52 @@ class LikeView(APIView):
                 "error": "An unexpected error occurred while removing the like.",
                 "details": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            
+
+class ArticleApprovalView(APIView):
+    """
+    APIView for Editors to approve or reject articles.
+    """
+    permission_classes = [IsAuthenticated, IsEditorOrAdmin]
+
+    def patch(self, request, article_id):
+        try:
+            # Get the article object
+            article = get_object_or_404(Article, id=article_id)
+
+            # Check if the user is an editor
+            if request.user.role != "editor":
+                raise PermissionDenied("You do not have permission to approve or publish articles.")
+
+            # Update the status to 'approved', 'rejected', or 'published'
+            new_status = request.data.get("status")  # Use a different name here
+            if new_status not in ["approved", "rejected", "published"]:
+                return Response(
+                    {"error": "Invalid status. Only 'approved', 'rejected', or 'published' are allowed."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Editors can change the status to 'approved', 'rejected', or 'published'
+            if new_status == "published" and article.status != "approved":
+                return Response(
+                    {"error": "You can only publish articles that have been approved."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            article.status = new_status
+            article.reviewed_by = request.user  # Track the reviewer (editor)
+            article.save()
+
+            return Response(
+                {"message": f"Article has been {new_status} successfully."},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {
+                    "error": "An unexpected error occurred while processing the request.",
+                    "details": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
