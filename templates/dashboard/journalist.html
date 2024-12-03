@@ -1,174 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <title>Juornalist Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
     <style>
-        .profile-cart {
-            position: absolute;
-            top: 50px;  /* Adjust the dropdown position */
-            right: 10px;
-            width: 300px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            display: none;  /* Hidden by default */
-            z-index: 999;
-        }
-        .profile-cart img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-        .profile-cart .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .profile-cart .profile-header h5 {
-            margin: 0;
-        }
-        .profile-cart .profile-details {
-            list-style-type: none;
-            padding: 0;
-        }
-        .profile-cart .profile-details li {
-            margin-bottom: 8px;
-        }
-        .profile-cart .profile-details li span {
-            font-weight: bold;
-        }
-        .profile-cart .btn-logout {
-            margin-top: 10px;
-            width: 100%;
-        }
-        .nav-item {
-            position: relative;
-        }
-        @media (max-width: 576px) {
-            .profile-cart {
-                width: 250px;  /* Adjust the width for small screens */
-                top: 40px;
-            }
-        }
-        #profile-icon {
-    border-radius: 50%;  /* Make the image circular */
-    width: 40px;  /* Adjust the size as needed */
-    height: 40px;  /* Adjust the size as needed */
-}
+      .profile-cart {
+        position: absolute;
+        top: 50px;
+        right: 10px;
+        width: 300px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        display: none;
+        z-index: 999;
+      }
+      .profile-cart img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+      #profile-icon {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Article Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
-
-                        <!-- Profile Dropdown (acting as cart) -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="profile-icon-link">
-                                <img src="https://via.placeholder.com/40" id="profile-icon" class="profile-icon" alt="Profile Icon" />
-                            </a>
-                            <!-- User Profile Cart -->
-                            <div class="profile-cart" id="profile-cart">
-                                <div class="profile-header">
-                                    <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
-                                    <h5 id="user-name-dropdown"></h5>
-                                </div>
-                                <ul class="profile-details">
-                                    <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
-                                    <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
-                                    <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
-                                </ul>
-                                <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
-                            </div>
-                        </li>
-                    </ul>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <button
+            class="btn btn-primary me-3"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#sidebar"
+            aria-controls="sidebar"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+          <h4>Welcome, <span id="user-name"></span></h4>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/articles">Articles</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" id="profile-icon-link">
+                  <img
+                    src="https://via.placeholder.com/40"
+                    id="profile-icon"
+                    alt="Profile Icon"
+                  />
+                </a>
+                <div class="profile-cart" id="profile-cart">
+                  <div class="profile-header">
+                    <img
+                      src="https://via.placeholder.com/50"
+                      id="profile-image"
+                      alt="Profile Image"
+                    />
+                    <h5 id="user-name-dropdown"></h5>
+                  </div>
+                  <ul class="profile-details">
+                    <li>
+                      <span>Email:</span> <span id="user-email-dropdown"></span>
+                    </li>
+                    <li>
+                      <span>Phone:</span> <span id="user-phone-dropdown"></span>
+                    </li>
+                    <li>
+                      <span>Role:</span> <span id="user-role-dropdown"></span>
+                    </li>
+                  </ul>
+                  <button class="btn btn-danger btn-logout" id="logout-btn">
+                    Logout
+                  </button>
                 </div>
-            </div>
-        </nav>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
 
-    <!-- Dashboard Content -->
-    <main class="container dashboard-container">
-        <h1>Welcome, <span id="user-name"></span></h1>
+    <!-- Sidebar -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="sidebar"
+      aria-labelledby="sidebarLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 id="sidebarLabel">Menu</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="list-group">
+          <li class="list-group-item"><a href="#">Home</a></li>
+          <li class="list-group-item"><a href="#">Articles</a></li>
+          <li class="list-group-item"><a href="#">Profile</a></li>
+          <li class="list-group-item">
+            <a
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#createArticleModal"
+              >Create Article</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="#" id="logout-sidebar">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+<!-- model -->
+<div
+class="modal fade"
+id="createArticleModal"
+tabindex="-1"
+aria-labelledby="createArticleModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="createArticleModalLabel">
+        Create Article
+      </h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form id="createArticleForm">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" class="form-control" id="title" required />
+        </div>
+        <div class="mb-3">
+          <label for="subtitle" class="form-label">Subtitle</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subtitle"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="content" class="form-label">Content</label>
+          <textarea
+            class="form-control"
+            id="content"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="categories" class="form-label">Categories</label>
+          <input
+            type="text"
+            class="form-control"
+            id="categories"
+            placeholder="Comma-separated (e.g., technology, cloud)"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="tags" class="form-label">Tags</label>
+          <input
+            type="text"
+            class="form-control"
+            id="tags"
+            placeholder="Comma-separated (e.g., cloud computing, IT)"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Image</label>
+          <input type="file" class="form-control" id="image" />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          Create Article
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
 
-        <!-- Profile Info Card Removed as it's now in the dropdown/cart -->
+    <!-- Dashboard Content -->
+    <main class="mt-4 container dashboard-container">
+      <div
+        class="banner text-center p-5"
+        style="
+          background: url('https://via.placeholder.com/1200x400') no-repeat
+            center/cover;
+          color: #fff;
+        "
+      >
+        <h1>Welcome</h1>
+        <p class="lead">Discover, read, and manage articles seamlessly.</p>
+        <a href="#articles-container" class="btn btn-primary btn-lg"
+          >Explore Articles</a
+        >
+      </div>
     </main>
 
+    <!-- search articles  -->
+    <section class="mt-4 mb-4">
+      <div class="container">
+        <div class="search-bar text-center">
+          <h2>Search Articles</h2>
+          <form
+            method="GET"
+            action="/search/"
+            class="d-flex justify-content-center mt-3"
+          >
+            <input
+              type="text"
+              id="categories"
+              name="categories"
+              class="form-control me-2"
+              placeholder="Enter categories (e.g., Tech, Education)"
+              style="max-width: 400px"
+            />
+            <input
+              type="text"
+              id="tags"
+              name="tags"
+              class="form-control me-2"
+              placeholder="Enter tags (e.g., AI, Blockchain)"
+              style="max-width: 400px"
+            />
+            <button type="button" class="btn btn-primary" id="searchBtn">
+              Search
+            </button>
+          </form>
+        </div>
+
+        <!-- Articles Section -->
+        <div id="articles" class="mt-4 row">
+          <!-- Articles will be populated here -->
+        </div>
+      </div>
+    </section>
+    <!-- render in data -->
+    <main class="container mt-5">
+      <h1>Articles</h1>
+      <div id="articles-container" class="row">
+        <!-- Cards will be injected here -->
+      </div>
+    </main>
+
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Fetch access token from localStorage
-            const accessToken = localStorage.getItem('access_token');
 
-            if (!accessToken) {
-                // If no access token is found, redirect to login
-                window.location.href = '/users/login-page';
+      // login 
+      document.addEventListener("DOMContentLoaded", () => {
+        const accessToken = localStorage.getItem("access_token");
+        if (!accessToken) {
+          window.location.href = "/users/login-page";
+        } else {
+          fetch("/users/user/", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data) {
+                localStorage.setItem("user_data", JSON.stringify(data));
+                document.getElementById("user-name").textContent =
+                  data.full_name;
+                document.getElementById("profile-icon").src =
+                  data.profile_image || "https://via.placeholder.com/40";
+                document.getElementById("user-name-dropdown").textContent =
+                  data.full_name;
+                document.getElementById("user-email-dropdown").textContent =
+                  data.email;
+                document.getElementById("user-phone-dropdown").textContent =
+                  data.number;
+                document.getElementById("user-role-dropdown").textContent =
+                  data.role;
+              } else {
+                alert("Failed to fetch user data");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred while fetching user data.");
+            });
+        }
+
+        document
+          .getElementById("profile-icon-link")
+          .addEventListener("click", () => {
+            const profileCart = document.getElementById("profile-cart");
+            profileCart.style.display =
+              profileCart.style.display === "block" ? "none" : "block";
+          });
+
+        document.getElementById("logout-btn").addEventListener("click", logout);
+        document
+          .getElementById("logout-sidebar")
+          .addEventListener("click", logout);
+
+        function logout() {
+          localStorage.removeItem("user_data");
+          localStorage.removeItem("access_token");
+          window.location.href = "/users/login-page";
+        }
+      });
+      
+      // create
+      document.addEventListener("DOMContentLoaded", () => {
+        const createArticleForm = document.getElementById("createArticleForm");
+
+        createArticleForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const title = document.getElementById("title").value;
+          const subtitle = document.getElementById("subtitle").value;
+          const content = document.getElementById("content").value;
+          const categories = document
+            .getElementById("categories")
+            .value.split(",")
+            .map((item) => item.trim());
+          const tags = document
+            .getElementById("tags")
+            .value.split(",")
+            .map((item) => item.trim());
+          const imageFile = document.getElementById("image").files[0]; // Get image file
+
+          // Prepare JSON payload
+          const payload = {
+            title,
+            subtitle,
+            content,
+            categories,
+            tags,
+            image: null, // Default to null for now
+          };
+
+          if (imageFile) {
+            // If image is uploaded, handle image upload (future implementation)
+            alert("Image upload functionality will be added later.");
+          }
+
+          const accessToken = localStorage.getItem("access_token");
+
+          try {
+            const response = await fetch("/articles/", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+              alert("Article created successfully!");
+              window.location.reload(); // Reload to update articles list
             } else {
-                // Use the access token to fetch user data
-                fetch('/users/user/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        // Store user data in localStorage
-                        localStorage.setItem('user_data', JSON.stringify(data));
+              const errorData = await response.json();
+              alert(
+                `Error: ${errorData.message || "Failed to create article."}`
+              );
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An unexpected error occurred.");
+          }
+        });
+      });
 
-                        // Display user data on the dashboard
-                        document.getElementById('user-name').textContent = data.full_name;
+      // fetch
+      document.addEventListener("DOMContentLoaded", () => {
+        const articlesContainer = document.getElementById("articles-container");
+        const accessToken = localStorage.getItem("access_token");
 
-                        // Set the profile icon
-                        document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
+        // Fetch articles
+        async function fetchArticles() {
+          try {
+            const response = await fetch("/articles/", {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
 
-                        // Display user data in the profile cart (dropdown)
-                        document.getElementById('user-name-dropdown').textContent = data.full_name;
-                        document.getElementById('user-email-dropdown').textContent = data.email;
-                        document.getElementById('user-phone-dropdown').textContent = data.number;
-                        document.getElementById('user-role-dropdown').textContent = data.role;
-                    } else {
-                        // Handle case where data is not returned or is invalid
-                        alert('Failed to fetch user data');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while fetching user data.');
+            if (response.ok) {
+              const articles = await response.json();
+              displayArticles(articles);
+            } else {
+              alert("Failed to fetch articles.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An unexpected error occurred while fetching articles.");
+          }
+        }
+
+        // Display articles as cards
+        function displayArticles(articles) {
+          articlesContainer.innerHTML = "";
+          articles.forEach((article) => {
+            const comments = article.comments.length
+              ? `<ul>${article.comments
+                  .map(
+                    (comment) =>
+                      `<li>${comment.content || "No comment text"}</li>`
+                  )
+                  .join("")}</ul>`
+              : "<p>No comments yet.</p>";
+
+            const likes = article.likes || 0;
+
+            const card = document.createElement("div");
+            card.className = "col-md-4 mb-4";
+            card.innerHTML = `
+                <div class="card">
+                    <img src="${
+                      article.image_url || "https://via.placeholder.com/300"
+                    }" 
+                         class="card-img-top" alt="Article Image" 
+                         style="width: 300px; height: 300px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${article.title}</h5>
+                        <p class="card-subtitle text-muted">${
+                          article.subtitle
+                        }</p>
+                        <p class="card-text">${article.content.substring(
+                          0,
+                          100
+                        )}...</p>
+                        <p><strong>Status:</strong> ${article.status}</p>
+                        <p><strong>Author:</strong> ${article.author_name} (${
+              article.author_email
+            })</p>
+                        <p><strong>Likes:</strong> ${likes}</p>
+                        <p><strong>Comments:</strong></p>
+                        ${comments}
+                        <button class="btn btn-primary btn-sm" onclick="editArticle(${
+                          article.id
+                        })">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteArticle(${
+                          article.id
+                        })">Delete</button>
+                        <button class="btn btn-info btn-sm" onclick="readArticle(${
+                          article.id
+                        })">Read</button>
+                    </div>
+                </div>
+            `;
+            articlesContainer.appendChild(card);
+          });
+        }
+
+        // Read Article - Show Full Article in Modal
+        window.readArticle = async function (articleId) {
+          try {
+            const response = await fetch(`/articles/${articleId}/`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
+            if (response.ok) {
+              const article = await response.json();
+              showArticleModal(article);
+            } else {
+              alert("Failed to load article details.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert(
+              "An unexpected error occurred while loading article details."
+            );
+          }
+        };
+
+        // Show Article Modal
+        function showArticleModal(article) {
+          const modalContent = `
+            <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="articleModalLabel">${
+                              article.title
+                            }</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="${
+                              article.image_url ||
+                              "https://via.placeholder.com/600"
+                            }" class="img-fluid mb-3" alt="Article Image">
+                            <h6><strong>Subtitle:</strong> ${
+                              article.subtitle
+                            }</h6>
+                            <p>${article.content}</p>
+                            <p><strong>Status:</strong> ${article.status}</p>
+                            <p><strong>Author:</strong> ${
+                              article.author_name
+                            } (${article.author_email})</p>
+                            <p><strong>Likes:</strong> ${article.likes || 0}</p>
+                            <p><strong>Comments:</strong></p>
+                            ${
+                              article.comments.length
+                                ? `<ul>${article.comments
+                                    .map(
+                                      (comment) =>
+                                        `<li>${
+                                          comment.content || "No comment text"
+                                        }</li>`
+                                    )
+                                    .join("")}</ul>`
+                                : "<p>No comments yet.</p>"
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+          // Inject modal into the body and show it
+          document.body.insertAdjacentHTML("beforeend", modalContent);
+          const modal = new bootstrap.Modal(
+            document.getElementById("articleModal")
+          );
+          modal.show();
+
+          // Remove modal from DOM after it is closed
+          document
+            .getElementById("articleModal")
+            .addEventListener("hidden.bs.modal", () => {
+              document.getElementById("articleModal").remove();
+            });
+        }
+
+        // Fetch articles on load
+        fetchArticles();
+      });
+
+      window.editContent = async function (articleId) {
+        const currentContent = document.getElementById(
+          `content-${articleId}`
+        ).textContent;
+
+        const newContent = prompt("Edit Content:", currentContent);
+        if (newContent && newContent !== currentContent) {
+          try {
+            const response = await fetch(`/article/${articleId}/`, {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content: newContent }),
+            });
+
+            if (response.ok) {
+              alert("Content updated successfully.");
+              fetchArticles(); // Refresh the articles list
+            } else {
+              alert("Failed to update content.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while updating content.");
+          }
+        }
+      };
+
+      window.updateArticle = async function (articleId) {
+        // Fetch article details for pre-filling the form
+        const response = await fetch(`/article/${articleId}/`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const article = await response.json();
+
+          // Populate and show modal
+          const modalContent = `
+            <div class="modal" tabindex="-1" id="update-modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Update Article</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="update-form">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" value="${article.title}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subtitle" class="form-label">Subtitle</label>
+                                    <input type="text" class="form-control" id="subtitle" value="${article.subtitle}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="content" class="form-label">Content</label>
+                                    <textarea class="form-control" id="content">${article.content}</textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-success" onclick="saveUpdatedArticle(${articleId})">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+          document.body.insertAdjacentHTML("beforeend", modalContent);
+          const modal = new bootstrap.Modal(
+            document.getElementById("update-modal")
+          );
+          modal.show();
+        } else {
+          alert("Failed to fetch article details.");
+        }
+      };
+
+      window.saveUpdatedArticle = async function (articleId) {
+        const title = document.getElementById("title").value;
+        const subtitle = document.getElementById("subtitle").value;
+        const content = document.getElementById("content").value;
+
+        try {
+          const response = await fetch(`/article/${articleId}/`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title, subtitle, content }),
+          });
+
+          if (response.ok) {
+            alert("Article updated successfully.");
+            document.getElementById("update-modal").remove();
+            fetchArticles(); // Refresh the articles list
+          } else {
+            alert("Failed to update article.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while updating the article.");
+        }
+      };
+
+      // Edit Article
+      async function editArticle(articleId) {
+        const newTitle = prompt("Enter new title:");
+        if (newTitle) {
+          try {
+            const response = await fetch(`/article/${articleId}/`, {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ title: newTitle }),
+            });
+
+            if (response.ok) {
+              alert("Article updated successfully!");
+              location.reload(); // Reload articles
+            } else {
+              alert("Failed to update article.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An unexpected error occurred while editing the article.");
+          }
+        }
+      }
+
+      // Delete Article
+      window.deleteArticle = async function (articleId) {
+        if (confirm("Are you sure you want to delete this article?")) {
+          try {
+            const response = await fetch(`/article/${articleId}/`, {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            });
+
+            if (response.ok) {
+              alert("Article deleted successfully!");
+              location.reload(); // Reload articles
+            } else {
+              alert("Failed to delete article.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An unexpected error occurred while deleting the article.");
+          }
+        }
+      };
+
+      // search 
+      document.addEventListener("DOMContentLoaded", function () {
+            const searchBtn = document.getElementById("searchBtn");
+            const categoriesInput = document.getElementById("categorie");
+            const tagsInput = document.getElementById("tags");
+            const articlesDiv = document.getElementById("articles");
+
+            // Debounce function
+            function debounce(fn, delay) {
+                let timer;
+                return function () {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(context, args), delay);
+                };
+            }
+
+            // Fetch and display articles
+            function fetchArticles() {
+                const categories = categoriesInput.value.trim();
+                const tags = tagsInput.value.trim();
+
+                const url = `/articles/search/?categories=${encodeURIComponent(categories)}&tags=${encodeURIComponent(tags)}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            renderArticles(data);
+                        } else {
+                            articlesDiv.innerHTML = "<p>No articles found.</p>";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching articles:", error);
+                        articlesDiv.innerHTML = "<p>Error loading articles.</p>";
+                    });
+            }
+
+            // Render articles to the DOM
+            function renderArticles(articles) {
+                console.log(articles);
+                articlesDiv.innerHTML = ''; // Clear previous results
+                articles.forEach(article => {
+                    const articleHtml = `
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="${article.image_url}" alt="${article.title}" class="img-fluid">
+                        <div class="card-body">
+                            <h5 class="card-title">${article.title}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${article.subtitle}</h6>
+                            <p><strong>Author:</strong> ${article.author_name}</p>
+                            <p><strong>Categories:</strong> ${article.categories.map(category => category.name).join(", ")}</p>
+                            <p><strong>Tags:</strong> ${article.tags.map(tag => tag.name).join(", ")}</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${article.likes_count || 0}</button>
+                            <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${article.comments.length || 0}</button>
+                            <a href="/article-page/${article.id}/" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+                    articlesDiv.innerHTML += articleHtml;
                 });
             }
 
-            // Show profile cart when clicking the profile icon
-            document.getElementById('profile-icon-link').addEventListener('click', () => {
-                const profileCart = document.getElementById('profile-cart');
-                profileCart.style.display = profileCart.style.display === 'block' ? 'none' : 'block';
-            });
 
-            // Logout functionality
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                // Clear stored user data and token
-                localStorage.removeItem('user_data');
-                localStorage.removeItem('access_token');
-                // Redirect to login page
-                window.location.href = '/users/login-page';
+            // Event listeners
+            searchBtn.addEventListener("click", debounce(fetchArticles, 500));
+
+            // Optional: Listen for Enter key press to trigger search
+            categoriesInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    debounce(fetchArticles, 500)();
+                }
+            });
+            tagsInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    debounce(fetchArticles, 500)();
+                }
             });
         });
     </script>
-</body>
+  </body>
 </html>

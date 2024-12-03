@@ -20,6 +20,7 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ArticleSerializer
     permission_classes = [IsAdminOrEditor] 
 
+
 class ArticleListCreateView(generics.ListCreateAPIView):
     """
     View for listing all articles (publicly accessible) and creating articles (restricted to Admins and Journalists).
@@ -28,16 +29,17 @@ class ArticleListCreateView(generics.ListCreateAPIView):
         """
         Override permissions:
         - Allow any user to GET (list).
-        - Restrict POST to authenticated Admins and Journalists.
+        - Restrict POST to authenticated Admins, Editors, and Journalists.
         """
         if self.request.method == "GET":
             return [AllowAny()]  # Public users can only view published articles
-        return [IsAdminOrJournalist()]  # Admins and Journalists can create articles
+        return [IsAdminOrJournalist()]  # Admins, Editors, and Journalists can create articles
 
     def get_queryset(self):
         """
         Return appropriate articles based on user role:
         - Admins can see all articles (published and unpublished).
+        - Editors can see all articles (published and unpublished).
         - Journalists can only see their own articles.
         - Public users can only see published articles.
         """
@@ -48,7 +50,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
                 if user.role == "admin":
                     return Article.objects.all()  # Admin can see all articles, regardless of status
                 elif user.role == "editor":
-                    return Article.objects.all()  # Editor can see all articles
+                    return Article.objects.all()  # Editors can see all articles
                 elif user.role == "journalist":
                     return Article.objects.filter(author=user)  # Journalists can only see their own articles
                 else:
@@ -67,15 +69,62 @@ class ArticleListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """
-        Restrict article creation to Admins and Journalists.
+        Restrict article creation to Admins, Editors, and Journalists.
         """
         if not self.request.user.is_authenticated:
             raise PermissionDenied("You must be logged in to create an article.")
         user = self.request.user
-        if user.role not in ["admin", "journalist"]:
+        if user.role not in ["admin", "editor", "journalist"]:
             raise PermissionDenied("You do not have permission to create articles.")
         serializer.save(author=user)
 
+
+class ArticleDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    View for retrieving, updating, and deleting an article.
+    - Admins can update/delete any article.
+    - Editors can update/delete any article.
+    - Journalists can only update/delete their own articles.
+    """
+    queryset = Article.objects.all()
+    serializer_class = ArticleCreateUpdateSerializer  # Use the same serializer for update
+
+    def get_permissions(self):
+        """
+        Override permissions for PUT, PATCH, and DELETE:
+        - Admins, Editors, and Journalists can update/delete articles.
+        """
+        if self.request.method in ["PUT", "PATCH", "DELETE"]:
+            return [IsAdminOrJournalist()]
+        return [AllowAny()]
+
+    def get_object(self):
+        """
+        Override to ensure the object is restricted based on the user’s role.
+        """
+        article = super().get_object()
+        user = self.request.user
+        if user.role == "journalist" and article.author != user:
+            raise PermissionDenied("You do not have permission to modify this article.")
+        return article
+
+    def perform_update(self, serializer):
+        """
+        Restrict article update to Admins, Editors, and Journalists for their own articles.
+        """
+        user = self.request.user
+        if user.role == "journalist" and serializer.instance.author != user:
+            raise PermissionDenied("You do not have permission to update this article.")
+        serializer.save(author=user)
+
+    def perform_destroy(self, instance):
+        """
+        Restrict article deletion to Admins, Editors, and Journalists for their own articles.
+        """
+        user = self.request.user
+        if user.role == "journalist" and instance.author != user:
+            raise PermissionDenied("You do not have permission to delete this article.")
+        instance.delete()
 
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """

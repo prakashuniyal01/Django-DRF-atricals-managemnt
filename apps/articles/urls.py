@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView, ArticleSearchView
+from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView, ArticleSearchView,ArticleDetailView
 from django.views.generic import TemplateView
 
 urlpatterns = [
     path('articles/', ArticleListCreateView.as_view(), name='article-list-create'),
+     # URL for retrieving, updating, or deleting a specific article
+    path('article/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
     path('articles/<int:pk>/', ArticleRetrieveUpdateDestroyView.as_view(), name='article-detail'),
     path("articles/<int:article_id>/approve/", ArticleApprovalView.as_view(), name="article-approve"),
     path('articles/search/', ArticleSearchView.as_view(), name='article-search'),

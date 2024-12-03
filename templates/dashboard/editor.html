@@ -1,174 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <title>editor Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
     <style>
-        .profile-cart {
-            position: absolute;
-            top: 50px;  /* Adjust the dropdown position */
-            right: 10px;
-            width: 300px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            display: none;  /* Hidden by default */
-            z-index: 999;
-        }
-        .profile-cart img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-        .profile-cart .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .profile-cart .profile-header h5 {
-            margin: 0;
-        }
-        .profile-cart .profile-details {
-            list-style-type: none;
-            padding: 0;
-        }
-        .profile-cart .profile-details li {
-            margin-bottom: 8px;
-        }
-        .profile-cart .profile-details li span {
-            font-weight: bold;
-        }
-        .profile-cart .btn-logout {
-            margin-top: 10px;
-            width: 100%;
-        }
-        .nav-item {
-            position: relative;
-        }
-        @media (max-width: 576px) {
-            .profile-cart {
-                width: 250px;  /* Adjust the width for small screens */
-                top: 40px;
-            }
-        }
-        #profile-icon {
-    border-radius: 50%;  /* Make the image circular */
-    width: 40px;  /* Adjust the size as needed */
-    height: 40px;  /* Adjust the size as needed */
-}
+      .profile-cart {
+        position: absolute;
+        top: 50px;
+        right: 10px;
+        width: 300px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        display: none;
+        z-index: 999;
+      }
+      .profile-cart img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+      #profile-icon {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Article Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
-
-                        <!-- Profile Dropdown (acting as cart) -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="profile-icon-link">
-                                <img src="https://via.placeholder.com/40" id="profile-icon" class="profile-icon" alt="Profile Icon" />
-                            </a>
-                            <!-- User Profile Cart -->
-                            <div class="profile-cart" id="profile-cart">
-                                <div class="profile-header">
-                                    <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
-                                    <h5 id="user-name-dropdown"></h5>
-                                </div>
-                                <ul class="profile-details">
-                                    <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
-                                    <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
-                                    <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
-                                </ul>
-                                <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
-                            </div>
-                        </li>
-                    </ul>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <button
+            class="btn btn-primary me-3"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#sidebar"
+            aria-controls="sidebar"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+          <h4>Welcome, <span id="user-name"></span></h4>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/articles">Articles</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" id="profile-icon-link">
+                  <img
+                    src="https://via.placeholder.com/40"
+                    id="profile-icon"
+                    alt="Profile Icon"
+                  />
+                </a>
+                <div class="profile-cart" id="profile-cart">
+                  <div class="profile-header">
+                    <img
+                      src="https://via.placeholder.com/50"
+                      id="profile-image"
+                      alt="Profile Image"
+                    />
+                    <h5 id="user-name-dropdown"></h5>
+                  </div>
+                  <ul class="profile-details">
+                    <li>
+                      <span>Email:</span> <span id="user-email-dropdown"></span>
+                    </li>
+                    <li>
+                      <span>Phone:</span> <span id="user-phone-dropdown"></span>
+                    </li>
+                    <li>
+                      <span>Role:</span> <span id="user-role-dropdown"></span>
+                    </li>
+                  </ul>
+                  <button class="btn btn-danger btn-logout" id="logout-btn">
+                    Logout
+                  </button>
                 </div>
-            </div>
-        </nav>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
 
-    <!-- Dashboard Content -->
-    <main class="container dashboard-container">
-        <h1>Welcome, <span id="user-name"></span></h1>
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="sidebar"
+      aria-labelledby="sidebarLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 id="sidebarLabel">Menu</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <!-- User Profile Section -->
+        <div id="user-profile" class="mb-3">
+          <h6>Welcome, <span id="user-fullname">User</span></h6>
+          <p>Email: <span id="user-email"></span></p>
+          <p>Role: <span id="user-role"></span></p>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal"
+              >Profile Settings</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#updateDetailsModal"
+              >Update Details</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#changePasswordModal"
+              >Change Password</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="#" id="logout-sidebar">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-        <!-- Profile Info Card Removed as it's now in the dropdown/cart -->
+    <!-- Modals -->
+
+    <!-- Profile Modal -->
+    <div
+      class="modal fade"
+      id="profileModal"
+      tabindex="-1"
+      aria-labelledby="profileModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Full Name:</strong> <span id="modal-fullname"></span></p>
+            <p><strong>Email:</strong> <span id="modal-email"></span></p>
+            <p><strong>Role:</strong> <span id="modal-role"></span></p>
+            <p><strong>Number</strong> <span id="modal-number"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Details Modal -->
+    <div
+      class="modal fade"
+      id="updateDetailsModal"
+      tabindex="-1"
+      aria-labelledby="updateDetailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateDetailsModalLabel">
+              Update Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="update-user-form">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" required />
+              </div>
+              <!-- <div class="mb-3">
+                <label for="password" class="form-label">password</label>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control"
+                  required
+                />
+              </div> -->
+              <div class="mb-3">
+                <label for="number" class="form-label">Phone Number</label>
+                <input type="text" id="number" class="form-control" required />
+              </div>
+              <button type="submit" class="btn btn-primary">
+                Save Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div
+      class="modal fade"
+      id="changePasswordModal"
+      tabindex="-1"
+      aria-labelledby="changePasswordModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changePasswordModalLabel">
+              Change Password
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="change-password-form">
+              <div class="mb-3">
+                <label for="old-password" class="form-label"
+                  >Old Password</label
+                >
+                <input
+                  type="password"
+                  id="old-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="new-password" class="form-label"
+                  >New Password</label
+                >
+                <input
+                  type="password"
+                  id="new-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="confirm-password" class="form-label"
+                  >Confirm Password</label
+                >
+                <input
+                  type="password"
+                  id="confirm-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <main class="mt-4 container dashboard-container">
+      <div
+        class="banner text-center p-5"
+        style="
+          background: url('https://via.placeholder.com/1200x400') no-repeat
+            center/cover;
+          color: #fff;
+        "
+      >
+        <h1>Welcome</h1>
+        <p class="lead">Discover, read, and manage articles seamlessly.</p>
+        <a href="#articles-container" class="btn btn-primary btn-lg"
+          >Explore Articles</a
+        >
+      </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Fetch access token from localStorage
-            const accessToken = localStorage.getItem('access_token');
+      document.addEventListener("DOMContentLoaded", () => {
+        const accessToken = localStorage.getItem("access_token");
+        if (!accessToken) {
+          window.location.href = "/users/login-page";
+        } else {
+          fetch("/users/user/", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data) {
+                localStorage.setItem("user_data", JSON.stringify(data));
+                document.getElementById("user-name").textContent =
+                  data.full_name;
+                document.getElementById("profile-icon").src =
+                  data.profile_image || "https://via.placeholder.com/40";
+                document.getElementById("user-name-dropdown").textContent =
+                  data.full_name;
+                document.getElementById("user-email-dropdown").textContent =
+                  data.email;
+                document.getElementById("user-phone-dropdown").textContent =
+                  data.number;
+                document.getElementById("user-role-dropdown").textContent =
+                  data.role;
+              } else {
+                alert("Failed to fetch user data");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred while fetching user data.");
+            });
+        }
 
-            if (!accessToken) {
-                // If no access token is found, redirect to login
-                window.location.href = '/users/login-page';
-            } else {
-                // Use the access token to fetch user data
-                fetch('/users/user/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
+        document
+          .getElementById("profile-icon-link")
+          .addEventListener("click", () => {
+            const profileCart = document.getElementById("profile-cart");
+            profileCart.style.display =
+              profileCart.style.display === "block" ? "none" : "block";
+          });
+
+        document.getElementById("logout-btn").addEventListener("click", logout);
+        document
+          .getElementById("logout-sidebar")
+          .addEventListener("click", logout);
+
+        function logout() {
+          localStorage.removeItem("user_data");
+          localStorage.removeItem("access_token");
+          window.location.href = "/users/login-page";
+        }
+      });
+
+      //   side bar
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("access_token");
+        const userApiUrl = "/users/user/";
+
+        // Fetch user details and populate sidebar and modals
+        fetch(userApiUrl, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+
+            // Populate sidebar
+            document.getElementById("user-fullname").textContent =
+              data.full_name;
+            document.getElementById("user-email").textContent = data.email;
+            document.getElementById("user-role").textContent = data.role;
+
+            // Populate profile modal
+            document.getElementById("modal-fullname").textContent =
+              data.full_name;
+            document.getElementById("modal-email").textContent = data.email;
+            document.getElementById("modal-role").textContent = data.role;
+            document.getElementById("modal-number").textContent = data.number;
+            // Populate update form
+            document.getElementById("email").value = data.email;
+            document.getElementById("number").value = data.number || "";
+
+            // Store user ID in a variable for later use
+            const userId = data.id;
+
+            // Add event listener to the update form
+            // Add event listener to the update form
+            document
+              .getElementById("update-user-form")
+              .addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic URL based on user ID
+
+                // Collect form data
+                const userData = {
+                  email: document.getElementById("email").value,
+                //   password: document.getElementById("password").value, // Assuming a password field exists
+                  number: document.getElementById("number").value,
+                };
+
+                // Send PUT request
+                fetch(updateApiUrl, {
+                  method: "PUT", // Changed to PUT
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(userData),
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        // Store user data in localStorage
-                        localStorage.setItem('user_data', JSON.stringify(data));
+                  .then((response) => response.json())
+                  .then(() => {
+                    alert("Details updated successfully!");
+                    window.location.reload(); // Refresh to reflect changes
+                  });
+              });
+          });
 
-                        // Display user data on the dashboard
-                        document.getElementById('user-name').textContent = data.full_name;
+        // Change Password
+        document
+          .getElementById("change-password-form")
+          .addEventListener("submit", (event) => {
+            event.preventDefault();
 
-                        // Set the profile icon
-                        document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
+            const token = localStorage.getItem("access_token");
+            const apiUrl = "/users/change-password/";
 
-                        // Display user data in the profile cart (dropdown)
-                        document.getElementById('user-name-dropdown').textContent = data.full_name;
-                        document.getElementById('user-email-dropdown').textContent = data.email;
-                        document.getElementById('user-phone-dropdown').textContent = data.number;
-                        document.getElementById('user-role-dropdown').textContent = data.role;
-                    } else {
-                        // Handle case where data is not returned or is invalid
-                        alert('Failed to fetch user data');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while fetching user data.');
-                });
+            // Collect password data
+            const passwordData = {
+              old_password: document.getElementById("old-password").value,
+              new_password: document.getElementById("new-password").value,
+              confirm_password:
+                document.getElementById("confirm-password").value,
+            };
+
+            // Basic validation
+            if (
+              !passwordData.old_password ||
+              !passwordData.new_password ||
+              !passwordData.confirm_password
+            ) {
+              alert("All fields are required.");
+              return;
             }
 
-            // Show profile cart when clicking the profile icon
-            document.getElementById('profile-icon-link').addEventListener('click', () => {
-                const profileCart = document.getElementById('profile-cart');
-                profileCart.style.display = profileCart.style.display === 'block' ? 'none' : 'block';
-            });
+            if (passwordData.new_password !== passwordData.confirm_password) {
+              alert("New password and confirm password do not match.");
+              return;
+            }
 
-            // Logout functionality
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                // Clear stored user data and token
-                localStorage.removeItem('user_data');
-                localStorage.removeItem('access_token');
-                // Redirect to login page
-                window.location.href = '/users/login-page';
-            });
-        });
+            // Log the data for debugging
+            console.log("Sending data:", passwordData);
+
+            fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(passwordData),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.json().then((data) => {
+                    throw new Error(
+                      data.detail || "Failed to change password."
+                    );
+                  });
+                }
+                return response.json();
+              })
+              .then(() => {
+                alert("Password changed successfully!");
+                // Optionally, clear the form
+                document.getElementById("change-password-form").reset();
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                alert(error.message || "An unknown error occurred.");
+              });
+          });
+      });
     </script>
-</body>
+  </body>
 </html>

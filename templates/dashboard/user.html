@@ -239,77 +239,101 @@
                 /* Adjust for smaller screens */
             }
         }
+        .profile-cart {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: none;
+            z-index: 999;
+        }
+        .profile-cart img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        #profile-icon {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <span class="close-btn" id="closeSidebar">&times;</span>
-        <h4>Dashboard</h4>
-        <a href="#">Home</a>
-        <a href="#">Articles</a>
-        <a href="#">Profile</a>
-        <a href="#">Settings</a>
-        <a href="#">Logout</a>
-    </div>
-    <!-- Header -->
-    <!-- Main content -->
-    <div class="main-content" id="mainContent">
-
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-                <div class="container-fluid">
-                    <button class="navbar-toggler" id="toggleSidebar">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <a class="navbar-brand" href="#">Welcome, <span id="user-name">User</span></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Articles</a></li>
-
-                            <!-- Profile Dropdown (acting as cart) -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="#" id="profile-icon-link">
-                                    <img src="https://via.placeholder.com/40" id="profile-icon" class="profile-icon"
-                                        alt="Profile Icon" />
-                                </a>
-                                <!-- User Profile Cart -->
-                                <div class="profile-cart" id="profile-cart">
-                                    <div class="profile-header">
-                                        <img src="https://via.placeholder.com/50" id="profile-image"
-                                            alt="Profile Image" />
-                                        <h5 id="user-name-dropdown"></h5>
-                                    </div>
-                                    <ul class="profile-details">
-                                        <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
-                                        <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
-                                        <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
-                                    </ul>
-                                    <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button class="btn btn-primary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h4 >Welcome, <span id="user-name"></span></h4>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="profile-icon-link">
+                                <img src="https://via.placeholder.com/40" id="profile-icon" alt="Profile Icon" />
+                            </a>
+                            <div class="profile-cart" id="profile-cart">
+                                <div class="profile-header">
+                                    <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
+                                    <h5 id="user-name-dropdown"></h5>
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
+                                <ul class="profile-details">
+                                    <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
+                                    <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
+                                    <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
+                                </ul>
+                                <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </nav>
-        </header>
-
-        <!-- Dashboard Content -->
-        <main class=" mt-4 container dashboard-container">
-            <div class="banner text-center p-5"
-                style="background: url('https://via.placeholder.com/1200x400') no-repeat center/cover; color: #fff;">
-                <h1>Welcome, <span id="user-name"></span></h1>
-                <p class="lead">Discover, read, and manage articles seamlessly.</p>
-                <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
             </div>
-        </main>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header">
+            <h5 id="sidebarLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- User Details Section -->
+            <div class="user-details mb-4">
+                <img id="profile-icon" src="https://via.placeholder.com/80" alt="Profile Image" class="rounded-circle mb-2">
+                <h5 id="user-name"></h5>
+                <p id="user-email-dropdown" class="text-muted"></p>
+                <button class="btn btn-primary btn-sm" id="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#profileModal">Edit Profile</button>
+            </div>
+    
+            <!-- Menu Items -->
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#">Home</a></li>
+                <li class="list-group-item"><a href="#">Articles</a></li>
+                <li class="list-group-item"><a href="#">Profile Settings</a></li>
+                <li class="list-group-item"><a href="#" id="logout-sidebar">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <main class=" mt-4 container dashboard-container">
+        <div class="banner text-center p-5"
+            style="background: url('https://via.placeholder.com/1200x400') no-repeat center/cover; color: #fff;">
+            <h1>Welcome</h1>
+            <p class="lead">Discover, read, and manage articles seamlessly.</p>
+            <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
+        </div>
+    </main>
         <!-- search articles  -->
         <section class="mt-4 mb-4">
             <div class="container">
@@ -348,27 +372,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sidebar toggle functionality
-        document.addEventListener("DOMContentLoaded", () => {
-            const sidebar = document.getElementById("sidebar");
-            const toggleSidebar = document.createElement("button");
-            toggleSidebar.className = "toggle-sidebar";
-            toggleSidebar.innerHTML = '<i class="bi bi-list"></i>';
-            document.body.appendChild(toggleSidebar);
-
-            // Toggle Sidebar
-            toggleSidebar.addEventListener("click", () => {
-                const isActive = sidebar.classList.toggle("active");
-                toggleSidebar.classList.toggle("close", isActive);
-
-                // Adjust content margin for active sidebar
-                const mainContent = document.querySelector(".main-content");
-                if (isActive) {
-                    mainContent.classList.add("shifted");
-                } else {
-                    mainContent.classList.remove("shifted");
-                }
-            });
-        });
+ 
 
         // search 
         document.addEventListener("DOMContentLoaded", function () {
@@ -456,62 +460,49 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Fetch access token from localStorage
             const accessToken = localStorage.getItem('access_token');
-
             if (!accessToken) {
-                // If no access token is found, redirect to login
                 window.location.href = '/users/login-page';
             } else {
-                // Use the access token to fetch user data
                 fetch('/users/user/', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data) {
-                            // Store user data in localStorage
-                            localStorage.setItem('user_data', JSON.stringify(data));
-
-                            // Display user data on the dashboard
-                            document.getElementById('user-name').textContent = data.full_name;
-
-                            // Set the profile icon
-                            document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
-
-                            // Display user data in the profile cart (dropdown)
-                            document.getElementById('user-name-dropdown').textContent = data.full_name;
-                            document.getElementById('user-email-dropdown').textContent = data.email;
-                            document.getElementById('user-phone-dropdown').textContent = data.number;
-                            document.getElementById('user-role-dropdown').textContent = data.role;
-                        } else {
-                            // Handle case where data is not returned or is invalid
-                            alert('Failed to fetch user data');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while fetching user data.');
-                    });
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        localStorage.setItem('user_data', JSON.stringify(data));
+                        document.getElementById('user-name').textContent = data.full_name;
+                        document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
+                        document.getElementById('user-name-dropdown').textContent = data.full_name;
+                        document.getElementById('user-email-dropdown').textContent = data.email;
+                        document.getElementById('user-phone-dropdown').textContent = data.number;
+                        document.getElementById('user-role-dropdown').textContent = data.role;
+                    } else {
+                        alert('Failed to fetch user data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while fetching user data.');
+                });
             }
 
-            // Show profile cart when clicking the profile icon
             document.getElementById('profile-icon-link').addEventListener('click', () => {
                 const profileCart = document.getElementById('profile-cart');
                 profileCart.style.display = profileCart.style.display === 'block' ? 'none' : 'block';
             });
 
-            // Logout functionality
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                // Clear stored user data and token
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            document.getElementById('logout-sidebar').addEventListener('click', logout);
+
+            function logout() {
                 localStorage.removeItem('user_data');
                 localStorage.removeItem('access_token');
-                // Redirect to login page
                 window.location.href = '/users/login-page';
-            });
+            }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
