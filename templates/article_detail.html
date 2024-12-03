@@ -1,23 +1,24 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }} - Article Management</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <title id="article-title">Article Management</title>
+    <!-- <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/responsive.css"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ SITE_URL }}/">Article Management</a>
+                <a class="navbar-brand" href="/">Article Management</a>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
                     </ul>
                 </div>
             </div>
@@ -25,30 +26,20 @@
     </header>
 
     <main class="container my-5">
-        <div class="article-detail">
-            <h1>{{ article.title }}</h1>
-            <p><strong>Author:</strong> {{ article.author_name }}</p>
-            <p><strong>Categories:</strong> {{ article.categories }}</p>
-            <p><strong>Tags:</strong> {{ article.tags }}</p>
-            <img src="{{ article.image_url }}" alt="{{ article.title }}" class="img-fluid my-3">
-            <div class="content">
-                <p>{{ article.content }}</p>
-            </div>
-            <div>
-                <button class="icon-btn" id="like-btn"><i class="bi bi-hand-thumbs-up"></i> Like</button>
-                <button class="icon-btn" id="comment-btn"><i class="bi bi-chat-left-text"></i> Comment</button>
-            </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="article-detail">
+                    <!-- Article content will be inserted dynamically here -->
+                    <div id="article-content"></div>
 
-            <div id="comments-section">
-                <!-- Dynamically load comments here -->
-                {% for comment in article.comments %}
-                    <div class="comment">
-                        <p>{{ comment.author }}: {{ comment.text }}</p>
+                    <div id="comments-section">
+                        <h5>Comments:</h5>
+                        <div id="comments-list"></div>
                     </div>
-                {% endfor %}
-            </div>
 
-            <button class="btn btn-secondary" onclick="window.history.back()">Back to Articles</button>
+                    <button class="btn btn-secondary" onclick="window.history.back()">Back to Articles</button>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -57,14 +48,16 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   
+
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
-            // Get the article ID from the URL (assuming it's in the form of /articles/{article_id}/)
-            const articleId = window.location.pathname.split("/")[2];
+            // Extract articleId from the URL
+            const pathParts = window.location.pathname.split("/").filter(part => part !== ""); // Remove empty strings
+            const articleId = pathParts[pathParts.length - 1]; // Get the last part of the URL path
             const articleData = await fetchArticleDetails(articleId);
             if (articleData) {
                 renderArticleDetails(articleData);
+                renderComments(articleData.comments);
             }
         });
 
@@ -75,42 +68,61 @@
                 if (!response.ok) throw new Error("Failed to fetch article details");
                 return await response.json();
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error fetching article:", error);
                 return null;
             }
         }
 
         // Render the article details dynamically
+        // Render the article details dynamically
         function renderArticleDetails(article) {
-            const container = document.getElementById('article-detail-container');
-            container.innerHTML = `
-                <h1>${article.title}</h1>
-                <h4 class="text-muted">by ${article.author_name}</h4>
-                <p><strong>Subtitle:</strong> ${article.subtitle}</p>
-                <p><strong>Content:</strong></p>
-                <p>${article.content}</p>
-                <p><strong>Categories:</strong> ${article.categories.map(c => c.name).join(', ')}</p>
-                <p><strong>Tags:</strong> ${article.tags.map(t => t.name).join(', ')}</p>
-                <div>
-                    <button class="btn btn-primary" id="like-btn">Like</button>
-                    <button class="btn btn-secondary" id="comment-btn">Comment</button>
-                </div>
-                <div id="comments-section">
-                    <h5>Comments:</h5>
-                    ${renderComments(article.comments)}
-                </div>
-            `;
+            const articleContentDiv = document.getElementById('article-content');
+            document.title = article.title;  // Update page title
+
+            // Make sure categories and tags are arrays of objects and extract the name or title
+            const categories = Array.isArray(article.categories) && article.categories.length > 0
+                ? article.categories.map(category => category.name || category.title).join(', ')
+                : 'No categories available';
+
+            const tags = Array.isArray(article.tags) && article.tags.length > 0
+                ? article.tags.map(tag => tag.name || tag.title).join(', ')
+                : 'No tags available';
+
+            articleContentDiv.innerHTML = `
+        <img src="${article.image_url}" alt="${article.title}" class="img-fluid my-3" style="max-width: 100%; height: auto;">
+        <h3>${article.title}</h3>
+        <p><strong>Author:</strong> ${article.author_name}</p>
+        <p><strong>Categories:</strong> ${categories}</p>
+        <p><strong>Tags:</strong> ${tags}</p>
+        <div class="content">${article.content}</div>
+        <div>
+            <button class="btn btn-primary" id="like-btn">Like</button>
+            <button class="btn btn-secondary" id="comment-btn">Comment</button>
+        </div>
+    `;
+
             setupLikeButton(article.id);
             setupCommentButton(article.id);
         }
 
+
         // Render comments dynamically
         function renderComments(comments) {
-            return comments.map(comment => `
-                <div class="comment">
-                    <p><strong>${comment.author_name}:</strong> ${comment.content}</p>
-                </div>
-            `).join('');
+            const commentsList = document.getElementById('comments-list');
+
+            // Make sure comments is an array
+            if (Array.isArray(comments)) {
+                commentsList.innerHTML = comments.map(comment => `
+                    <div class="comment">
+                        <p><strong>${comment.author_name || 'Anonymous'}:</strong> ${comment.content || 'No content'}</p>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="promptReply(${comment.id})">Reply</button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                commentsList.innerHTML = '<p>No comments available</p>';
+            }
         }
 
         // Like button functionality
@@ -145,7 +157,7 @@
         // Like article API call
         async function likeArticle(articleId) {
             try {
-                const response = await fetch(`/articles/${articleId}/like/`, {
+                const response = await fetch(`/api/articles/${articleId}/like/`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
@@ -157,7 +169,7 @@
                     alert("Failed to like the article");
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error liking article:", error);
             }
         }
 
@@ -187,9 +199,40 @@
                     alert("Failed to submit comment");
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error submitting comment:", error);
+            }
+        }
+
+        // Prompt for a reply to a comment
+        function promptReply(commentId) {
+            const reply = prompt("Enter your reply:");
+            if (reply) {
+                submitReply(commentId, reply);
+            }
+        }
+
+        // Submit reply to a comment API call
+        async function submitReply(commentId, replyContent) {
+            try {
+                const response = await fetch(`/comments/${commentId}/reply/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: replyContent })
+                });
+                if (response.ok) {
+                    alert("Reply submitted!");
+                    location.reload();  // Refresh the page to show the new reply
+                } else {
+                    alert("Failed to submit reply");
+                }
+            } catch (error) {
+                console.error("Error submitting reply:", error);
             }
         }
     </script>
 </body>
+
 </html>

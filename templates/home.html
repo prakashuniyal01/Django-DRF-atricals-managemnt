@@ -73,14 +73,22 @@
     </section>
 
     <!-- Search Section -->
-    <section class="mb-4">
+    <section class="mt-4 mb-4">
         <div class="container">
             <div class="search-bar text-center">
                 <h2>Search Articles</h2>
                 <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
-                    <input type="text" name="q" class="form-control me-2" placeholder="Search by categories or tags" style="max-width: 400px;">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <input type="text" id="categories" name="categories" class="form-control me-2"
+                        placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px;">
+                    <input type="text" id="tags" name="tags" class="form-control me-2"
+                        placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px;">
+                    <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
                 </form>
+            </div>
+
+            <!-- Articles Section -->
+            <div id="articles" class="mt-4 row">
+                <!-- Articles will be populated here -->
             </div>
         </div>
     </section>
@@ -113,8 +121,93 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Search functionality
+         document.addEventListener("DOMContentLoaded", function () {
+            const searchBtn = document.getElementById("searchBtn");
+            const categoriesInput = document.getElementById("categories");
+            const tagsInput = document.getElementById("tags");
+            const articlesDiv = document.getElementById("articles");
+
+            // Debounce function
+            function debounce(fn, delay) {
+                let timer;
+                return function () {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(context, args), delay);
+                };
+            }
+
+            // Fetch and display articles
+            function fetchArticles() {
+                const categories = categoriesInput.value.trim();
+                const tags = tagsInput.value.trim();
+
+                const url = `/articles/search/?categories=${encodeURIComponent(categories)}&tags=${encodeURIComponent(tags)}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            renderArticles(data);
+                        } else {
+                            articlesDiv.innerHTML = "<p>No articles found.</p>";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching articles:", error);
+                        articlesDiv.innerHTML = "<p>Error loading articles.</p>";
+                    });
+            }
+
+            // Render articles to the DOM
+            function renderArticles(articles) {
+                console.log(articles);
+                articlesDiv.innerHTML = ''; // Clear previous results
+                articles.forEach(article => {
+                    const articleHtml = `
+            <div class="col">
+                <div class="card h-100">
+                    <img src="${article.image_url}" alt="${article.title}" class="img-fluid">
+                    <div class="card-body">
+                        <h5 class="card-title">${article.title}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${article.subtitle}</h6>
+                        <p><strong>Author:</strong> ${article.author_name}</p>
+                        <p><strong>Categories:</strong> ${article.categories.map(category => category.name).join(", ")}</p>
+                        <p><strong>Tags:</strong> ${article.tags.map(tag => tag.name).join(", ")}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${article.likes_count || 0}</button>
+                        <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${article.comments.length || 0}</button>
+                        <a href="/article-page/${article.id}/" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        `;
+                    articlesDiv.innerHTML += articleHtml;
+                });
+            }
+
+
+            // Event listeners
+            searchBtn.addEventListener("click", debounce(fetchArticles, 500));
+
+            // Optional: Listen for Enter key press to trigger search
+            categoriesInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    debounce(fetchArticles, 500)();
+                }
+            });
+            tagsInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    debounce(fetchArticles, 500)();
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            
+
             const articlesContainer = document.getElementById('articles-container');
             const loadMoreButton = document.getElementById('load-more');
             let page = 1;
@@ -160,7 +253,7 @@
                             <div class="card-footer d-flex justify-content-between">
                                 <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${likes_count || 0}</button>
                                 <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${comments.length || 0}</button>
-                                <a href="/articles/${id}/" class="btn btn-primary">Read More</a>
+                                <a href="/article-page/${id}/" class="btn btn-primary">Read More</a>
                             </div>
                         </div>
                     </div>`;

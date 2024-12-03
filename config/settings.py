@@ -84,8 +84,8 @@ AUTHENTICATION_BACKENDS = [
 
 # Django REST Framework - Simple JWT configuration
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Access token lifetime (15 minutes)
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Refresh token lifetime (1 day)
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Access token lifetime (15 minutes)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token lifetime (1 day)
     'ROTATE_REFRESH_TOKENS': False,                   # Don't rotate refresh tokens
     'BLACKLIST_AFTER_ROTATION': True,                 # Blacklist refresh tokens after use
 }

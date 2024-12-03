@@ -132,98 +132,245 @@
         .footer .social-icons a:hover {
             color: #007bff;
         }
+
+        /* Base Sidebar Styles */
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            /* Initially hidden */
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s ease-in-out;
+            z-index: 1050;
+        }
+
+        .sidebar.active {
+            left: 0;
+            /* Show when active */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                /* Adjust width for smaller screens */
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .toggle-sidebar {
+                left: 10px;
+                /* Align toggle button */
+            }
+        }
+
+        /* Sidebar Header */
+        .sidebar h3 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* Sidebar Links */
+        .sidebar a {
+            display: block;
+            color: #adb5bd;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Sidebar Toggle Button */
+        .toggle-sidebar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            cursor: pointer;
+            transition: left 0.3s;
+        }
+
+        .toggle-sidebar.close {
+            left: 220px;
+            /* Adjust for active sidebar */
+            background-color: #dc3545;
+        }
+
+        /* Content Area Adjustments */
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s;
+        }
+
+        .main-content.shifted {
+            margin-left: 250px;
+            /* Matches sidebar width */
+        }
+
+        @media (max-width: 768px) {
+            .main-content.shifted {
+                margin-left: 200px;
+                /* Adjust for smaller screens */
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <span class="close-btn" id="closeSidebar">&times;</span>
+        <h4>Dashboard</h4>
+        <a href="#">Home</a>
+        <a href="#">Articles</a>
+        <a href="#">Profile</a>
+        <a href="#">Settings</a>
+        <a href="#">Logout</a>
+    </div>
     <!-- Header -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Article Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
 
-                        <!-- Profile Dropdown (acting as cart) -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" id="profile-icon-link">
-                                <img src="https://via.placeholder.com/40" id="profile-icon" class="profile-icon"
-                                    alt="Profile Icon" />
-                            </a>
-                            <!-- User Profile Cart -->
-                            <div class="profile-cart" id="profile-cart">
-                                <div class="profile-header">
-                                    <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
-                                    <h5 id="user-name-dropdown"></h5>
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+                <div class="container-fluid">
+                    <button class="navbar-toggler" id="toggleSidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a class="navbar-brand" href="#">Welcome, <span id="user-name">User</span></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Articles</a></li>
+
+                            <!-- Profile Dropdown (acting as cart) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" id="profile-icon-link">
+                                    <img src="https://via.placeholder.com/40" id="profile-icon" class="profile-icon"
+                                        alt="Profile Icon" />
+                                </a>
+                                <!-- User Profile Cart -->
+                                <div class="profile-cart" id="profile-cart">
+                                    <div class="profile-header">
+                                        <img src="https://via.placeholder.com/50" id="profile-image"
+                                            alt="Profile Image" />
+                                        <h5 id="user-name-dropdown"></h5>
+                                    </div>
+                                    <ul class="profile-details">
+                                        <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
+                                        <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
+                                        <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
+                                    </ul>
+                                    <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
                                 </div>
-                                <ul class="profile-details">
-                                    <li><span>Email:</span> <span id="user-email-dropdown"></span></li>
-                                    <li><span>Phone:</span> <span id="user-phone-dropdown"></span></li>
-                                    <li><span>Role:</span> <span id="user-role-dropdown"></span></li>
-                                </ul>
-                                <button class="btn btn-danger btn-logout" id="logout-btn">Logout</button>
-                            </div>
-                        </li>
-                    </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class=" mt-4 container dashboard-container">
+            <div class="banner text-center p-5"
+                style="background: url('https://via.placeholder.com/1200x400') no-repeat center/cover; color: #fff;">
+                <h1>Welcome, <span id="user-name"></span></h1>
+                <p class="lead">Discover, read, and manage articles seamlessly.</p>
+                <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
+            </div>
+        </main>
+        <!-- search articles  -->
+        <section class="mt-4 mb-4">
+            <div class="container">
+                <div class="search-bar text-center">
+                    <h2>Search Articles</h2>
+                    <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
+                        <input type="text" id="categories" name="categories" class="form-control me-2"
+                            placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px;">
+                        <input type="text" id="tags" name="tags" class="form-control me-2"
+                            placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px;">
+                        <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                    </form>
+                </div>
+
+                <!-- Articles Section -->
+                <div id="articles" class="mt-4 row">
+                    <!-- Articles will be populated here -->
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <!-- Dashboard Content -->
-    <main class=" mt-4 container dashboard-container">
-        <div class="banner text-center p-5"
-            style="background: url('https://via.placeholder.com/1200x400') no-repeat center/cover; color: #fff;">
-            <h1>Welcome, <span id="user-name"></span></h1>
-            <p class="lead">Discover, read, and manage articles seamlessly.</p>
-            <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
-        </div>
-    </main>
-    <!-- search articles  -->
-    <section class="mt-4 mb-4">
-        <div class="container">
-            <div class="search-bar text-center">
-                <h2>Search Articles</h2>
-                <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
-                    <input type="text" id="categories" name="categories" class="form-control me-2"
-                        placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px;">
-                    <input type="text" id="tags" name="tags" class="form-control me-2"
-                        placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px;">
-                    <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                </form>
-            </div>
-
-            <!-- Articles Section -->
-            <div id="articles" class="mt-4 row">
-                <!-- Articles will be populated here -->
-            </div>
-        </div>
-    </section>
-
-
-
-    <main class="container my-5">
-        <section>
-            <h2 class="mb-4">Articles</h2>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="articles-container">
-                <!-- Articles dynamically appended -->
-            </div>
-            <div class="text-center mt-4">
-                <button id="load-more" class="btn btn-primary">Load More</button>
-            </div>
         </section>
-    </main>
 
+
+
+        <main class="container my-5">
+            <section>
+                <h2 class="mb-4">Articles</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="articles-container">
+                    <!-- Articles dynamically appended -->
+                </div>
+                <div class="text-center mt-4">
+                    <button id="load-more" class="btn btn-primary">Load More</button>
+                </div>
+            </section>
+        </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Sidebar toggle functionality
+        document.addEventListener("DOMContentLoaded", () => {
+            const sidebar = document.getElementById("sidebar");
+            const toggleSidebar = document.createElement("button");
+            toggleSidebar.className = "toggle-sidebar";
+            toggleSidebar.innerHTML = '<i class="bi bi-list"></i>';
+            document.body.appendChild(toggleSidebar);
 
-        // seach 
+            // Toggle Sidebar
+            toggleSidebar.addEventListener("click", () => {
+                const isActive = sidebar.classList.toggle("active");
+                toggleSidebar.classList.toggle("close", isActive);
+
+                // Adjust content margin for active sidebar
+                const mainContent = document.querySelector(".main-content");
+                if (isActive) {
+                    mainContent.classList.add("shifted");
+                } else {
+                    mainContent.classList.remove("shifted");
+                }
+            });
+        });
+
+        // search 
         document.addEventListener("DOMContentLoaded", function () {
             const searchBtn = document.getElementById("searchBtn");
             const categoriesInput = document.getElementById("categories");
@@ -269,24 +416,24 @@
                 articlesDiv.innerHTML = ''; // Clear previous results
                 articles.forEach(article => {
                     const articleHtml = `
-            <div class="col">
-                <div class="card h-100">
-                    <img src="${article.image_url}" alt="${article.title}" class="img-fluid">
-                    <div class="card-body">
-                        <h5 class="card-title">${article.title}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${article.subtitle}</h6>
-                        <p><strong>Author:</strong> ${article.author_name}</p>
-                        <p><strong>Categories:</strong> ${article.categories.map(category => category.name).join(", ")}</p>
-                        <p><strong>Tags:</strong> ${article.tags.map(tag => tag.name).join(", ")}</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${article.likes_count || 0}</button>
-                        <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${article.comments.length || 0}</button>
-                        <a href="/articles/${article.id}/" class="btn btn-primary">Read More</a>
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="${article.image_url}" alt="${article.title}" class="img-fluid">
+                        <div class="card-body">
+                            <h5 class="card-title">${article.title}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${article.subtitle}</h6>
+                            <p><strong>Author:</strong> ${article.author_name}</p>
+                            <p><strong>Categories:</strong> ${article.categories.map(category => category.name).join(", ")}</p>
+                            <p><strong>Tags:</strong> ${article.tags.map(tag => tag.name).join(", ")}</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${article.likes_count || 0}</button>
+                            <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${article.comments.length || 0}</button>
+                            <a href="/article-page/${article.id}/" class="btn btn-primary">Read More</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
                     articlesDiv.innerHTML += articleHtml;
                 });
             }
@@ -401,23 +548,23 @@
             // Function to render articles as cards
             function renderArticles(articles) {
                 const createCard = ({ image_url, title, subtitle, author_name, categories, tags, likes_count, comments, id }) => `
-                    <div class="col">
-                        <div class="card h-100">
-                            <img src="${image_url || 'https://via.placeholder.com/300'}" alt="Image" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title">${title}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
-                                <p><strong>Author:</strong> ${author_name}</p>
-                                <p><strong>Categories:</strong> ${categories.map(c => c.name).join(', ')}</p>
-                                <p><strong>Tags:</strong> ${tags.map(t => t.name).join(', ')}</p>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="${image_url || 'https://via.placeholder.com/300'}" alt="Image" class="card-img-top">
+                                <div class="card-body">
+                                    <h5 class="card-title">${title}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
+                                    <p><strong>Author:</strong> ${author_name}</p>
+                                    <p><strong>Categories:</strong> ${categories.map(c => c.name).join(', ')}</p>
+                                    <p><strong>Tags:</strong> ${tags.map(t => t.name).join(', ')}</p>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${likes_count || 0}</button>
+                                    <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${comments.length || 0}</button>
+                                    <a href="/article-page/${id}/" class="btn btn-primary">Read More</a>
+                                </div>
                             </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <button class="icon-btn"><i class="bi bi-hand-thumbs-up"></i> ${likes_count || 0}</button>
-                                <button class="icon-btn"><i class="bi bi-chat-left-text"></i> ${comments.length || 0}</button>
-                                <a href="/articles/${id}/" class="btn btn-primary">Read More</a>
-                            </div>
-                        </div>
-                    </div>`;
+                        </div>`;
 
                 articles.forEach(article => articlesContainer.innerHTML += createCard(article));
             }

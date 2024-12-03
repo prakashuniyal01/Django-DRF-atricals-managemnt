@@ -37,3 +37,14 @@ class IsEditorOrAdmin(permissions.BasePermission):
         if request.user.is_authenticated:
             return request.user.role in ["admin", "editor"]
         return False
+
+
+class IsAuthorOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow authors of an object to edit or delete it.
+    Admin users can modify anything.
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.author == request.user or request.user.is_staff

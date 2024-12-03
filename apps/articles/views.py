@@ -1,15 +1,17 @@
-from rest_framework import generics
+from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Comment, Like, Article,Category, Tag
 from .serializers import ArticleSerializer, ArticleCreateUpdateSerializer, CommentSerializer, LikeSerializer,ArticleSearchSerializer
-from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor
+from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor, IsAuthorOrReadOnly
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.db import IntegrityError
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
 
@@ -180,109 +182,147 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CommentView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    API view for creating, listing, updating, and deleting comments.
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+
+    def get(self, request, article_id):
+        try:
+            comments = Comment.objects.filter(article_id=article_id, parent=None).prefetch_related('likes')
+            serializer = CommentSerializer(comments, many=True)
+            
+            # Include total likes and replies for each comment
+            for comment_data in serializer.data:
+                comment = Comment.objects.get(id=comment_data['id'])
+                comment_data['likes_count'] = Like.objects.filter(comment=comment).count()
+                
+                # Fetch replies for the comment and include author details
+                replies = Comment.objects.filter(parent=comment).prefetch_related('likes')
+                reply_data = []
+                for reply in replies:
+                    reply_info = {
+                        'id': reply.id,
+                        'author': reply.author.username,  # Assuming `username` is used for user identification
+                        'content': reply.content,
+                        'likes_count': Like.objects.filter(comment=reply).count(),
+                    }
+                    reply_data.append(reply_info)
+                comment_data['replies'] = reply_data
+
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def post(self, request, article_id):
         try:
-            article = get_object_or_404(Article, id=article_id)
-            
-            # Ensure 'author' and 'article' are set
-            data = request.data.copy()
-            data['author'] = request.user.id  # Use authenticated user's ID as the author
-            data['article'] = article.id     # Associate the comment with the article
-
-            # Serialize and validate the data
-            serializer = CommentSerializer(data=data)
+            serializer = CommentSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(author=request.user)  # Explicitly set the author
+                serializer.save(article_id=article_id, author=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while adding the comment.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-    def patch(self, request, comment_id):
+    def put(self, request, comment_id):
         try:
-            comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+            comment = Comment.objects.get(id=comment_id)
+            self.check_object_permissions(request, comment)
             serializer = CommentSerializer(comment, data=request.data, partial=True)
             if serializer.is_valid():
-                serializer.save(edited=True)  # Mark the comment as edited
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                serializer.save()
+                return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"error": "Comment not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while updating the comment.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request, comment_id):
         try:
-            comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+            comment = Comment.objects.get(id=comment_id)
+            self.check_object_permissions(request, comment)
             comment.delete()
-            return Response({"message": "Comment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "Comment deleted."}, status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response({"error": "Comment not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while deleting the comment.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class ReplyView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    API view for adding replies to comments.
+    """
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, comment_id):
         try:
-            parent_comment = get_object_or_404(Comment, id=comment_id)
-            data = request.data.copy()
-            data['author'] = request.user.id
-            data['article'] = parent_comment.article.id
-            data['parent'] = parent_comment.id
-
-            serializer = CommentSerializer(data=data)
+            parent_comment = Comment.objects.get(id=comment_id)
+            serializer = CommentSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(article=parent_comment.article, parent=parent_comment, author=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            return Response({"error": "Parent comment not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while adding the reply.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class LikeView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    API view for liking and unliking articles or comments.
+    """
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, comment_id):
+    def post(self, request, comment_id=None, article_id=None):
         try:
-            comment = get_object_or_404(Comment, id=comment_id)
-            like, created = Like.objects.get_or_create(comment=comment, user=request.user)
-            if created:
-                return Response({"message": "Comment liked successfully"}, status=status.HTTP_201_CREATED)
-            return Response({"message": "You already liked this comment"}, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError:
-            return Response({
-                "error": "You have already liked this comment."
-            }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while liking the comment.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if comment_id:
+                comment = Comment.objects.get(id=comment_id)
+                if Like.objects.filter(user=request.user, comment=comment).exists():
+                    return Response({"detail": "Already liked this comment."}, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, comment_id):
-        try:
-            comment = get_object_or_404(Comment, id=comment_id)
-            like = get_object_or_404(Like, comment=comment, user=request.user)
-            like.delete()
-            return Response({"message": "Like removed successfully"}, status=status.HTTP_204_NO_CONTENT)
+                Like.objects.create(user=request.user, comment=comment)
+                likes_count = Like.objects.filter(comment=comment).count()
+                return Response({"detail": "Comment liked.", "likes_count": likes_count}, status=status.HTTP_201_CREATED)
+
+            if article_id:
+                article = Article.objects.get(id=article_id)
+                if Like.objects.filter(user=request.user, article=article).exists():
+                    return Response({"detail": "Already liked this article."}, status=status.HTTP_400_BAD_REQUEST)
+
+                Like.objects.create(user=request.user, article=article)
+                likes_count = Like.objects.filter(article=article).count()
+                return Response({"detail": "Article liked.", "likes_count": likes_count}, status=status.HTTP_201_CREATED)
+        except ObjectDoesNotExist:
+            return Response({"error": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({
-                "error": "An unexpected error occurred while removing the like.",
-                "details": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, comment_id=None, article_id=None):
+        try:
+            if comment_id:
+                comment = Comment.objects.get(id=comment_id)
+                like = Like.objects.filter(user=request.user, comment=comment)
+                if like.exists():
+                    like.delete()
+                    likes_count = Like.objects.filter(comment=comment).count()
+                    return Response({"detail": "Comment unliked.", "likes_count": likes_count}, status=status.HTTP_204_NO_CONTENT)
+                return Response({"detail": "Like not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            if article_id:
+                article = Article.objects.get(id=article_id)
+                like = Like.objects.filter(user=request.user, article=article)
+                if like.exists():
+                    like.delete()
+                    likes_count = Like.objects.filter(article=article).count()
+                    return Response({"detail": "Article unliked.", "likes_count": likes_count}, status=status.HTTP_204_NO_CONTENT)
+                return Response({"detail": "Like not found."}, status=status.HTTP_404_NOT_FOUND)
+        except ObjectDoesNotExist:
+            return Response({"error": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)       
             
 
 class ArticleApprovalView(APIView):
