@@ -120,3 +120,29 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = ('id', 'comment', 'user')
         read_only_fields = ('user',)
+    
+# search     
+class ArticleSearchSerializer(serializers.ModelSerializer):
+    categories = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Article
+        fields = [
+            "id",
+            "title",
+            "subtitle",
+            "content",
+            "categories",
+            "tags",
+            "status",
+            "publish_date",
+        ]
+
+    def get_categories(self, obj):
+        # Return the names of the categories as a list
+        return [category.name for category in obj.categories.all()]
+
+    def get_tags(self, obj):
+        # Return the names of the tags as a list
+        return [tag.name for tag in obj.tags.all()]

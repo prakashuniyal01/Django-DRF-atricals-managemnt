@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView
+from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView, ArticleSearchView
 from django.views.generic import TemplateView
 
 urlpatterns = [
@@ -10,7 +10,7 @@ urlpatterns = [
     path('comments/<int:comment_id>/reply/', ReplyView.as_view(), name='comment-reply'),
     path('comments/<int:comment_id>/like/', LikeView.as_view(), name='comment-like'),
     path("articles/<int:article_id>/approve/", ArticleApprovalView.as_view(), name="article-approve"),
-    
+    path('articles/search/', ArticleSearchView.as_view(), name='article-search'),
     
     # templates rendering 
      path('article-page/<int:pk>/', TemplateView.as_view(template_name='article_detail.html'), name='article-detail')

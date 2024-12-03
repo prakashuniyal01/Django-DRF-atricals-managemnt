@@ -2,13 +2,15 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import Comment, Like, Article
-from .serializers import ArticleSerializer, ArticleCreateUpdateSerializer, CommentSerializer, LikeSerializer
+from .models import Comment, Like, Article,Category, Tag
+from .serializers import ArticleSerializer, ArticleCreateUpdateSerializer, CommentSerializer, LikeSerializer,ArticleSearchSerializer
 from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.db import IntegrityError
+from django.db.models import Q
+from rest_framework.exceptions import ValidationError
 
 
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -329,3 +331,48 @@ class ArticleApprovalView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+# serach
+class ArticleSearchView(APIView):
+    """
+    API to search published articles by category or tag.
+    """
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Extract query parameters
+            categories = request.GET.get("categories", "")
+            tags = request.GET.get("tags", "")
+
+            # Split and clean categories and tags input
+            category_terms = [term.strip() for term in categories.split(",") if term.strip()]
+            tag_terms = [term.strip() for term in tags.split(",") if term.strip()]
+
+            # Validate input: at least one category or tag must be provided
+            if not category_terms and not tag_terms:
+                raise ValidationError("At least one category or tag is required to perform the search.")
+
+            # Query only published articles (exclude drafts)
+            query_filter = Article.objects.filter(status="published")
+
+            # Query articles by categories first
+            if category_terms:
+                query_filter = query_filter.filter(categories__name__in=category_terms)
+
+            # If no articles are found by category, fallback to tags
+            if not query_filter.exists() and tag_terms:
+                query_filter = Article.objects.filter(tags__name__in=tag_terms, status="published")
+
+            # If still no articles found, return empty response
+            if not query_filter.exists():
+                return Response([], status=status.HTTP_200_OK)
+
+            # Serialize the articles
+            serializer = ArticleSerializer(query_filter.distinct(), many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
