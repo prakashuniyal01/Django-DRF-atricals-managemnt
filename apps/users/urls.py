@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import OTPVerificationView, UserRegisterView, LoginView, UserUpdateView, PasswordChangeView, SendOtpView, VerifyOtpView, ResendOTPView, UserDetailView
+from .views import OTPVerificationView, UserRegisterView, LoginView, UserUpdateView, PasswordChangeView, SendOtpView, VerifyOtpView, ResendOTPView, UserDetailView, AdminUserView
 from django.views.generic import TemplateView
 
 urlpatterns = [
@@ -34,4 +34,8 @@ urlpatterns = [
 
     # Add the following to handle /user/dashboard/
     # path('user/dashboard/', TemplateView.as_view(template_name='dashboard/user.html'), name='user-detail'),
+    
+    # admins crud should
+    path('admin/users/', AdminUserView.as_view(), name='admin-users-list'),  # For listing users
+    path('admin/users/<int:user_id>/', AdminUserView.as_view(), name='admin-user-detail'),  # For updating, deleting, or changing password for a user
 ]

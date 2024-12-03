@@ -274,197 +274,267 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Wait until the document content is fully loaded
     document.addEventListener("DOMContentLoaded", () => {
+      // Retrieve the access token from localStorage to check if the user is authenticated
       const accessToken = localStorage.getItem("access_token");
+
+      // If the token does not exist, redirect the user to the login page
       if (!accessToken) {
-        window.location.href = "/users/login-page";
+        redirectToLoginPage();
       } else {
-        fetch("/users/user/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data) {
-              localStorage.setItem("user_data", JSON.stringify(data));
-              document.getElementById("user-name").textContent =
-                data.full_name;
-              document.getElementById("profile-icon").src =
-                data.profile_image || "https://via.placeholder.com/40";
-              document.getElementById("user-name-dropdown").textContent =
-                data.full_name;
-              document.getElementById("user-email-dropdown").textContent =
-                data.email;
-              document.getElementById("user-phone-dropdown").textContent =
-                data.number;
-              document.getElementById("user-role-dropdown").textContent =
-                data.role;
-            } else {
-              alert("Failed to fetch user data");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("An error occurred while fetching user data.");
-          });
+        // If the token is present, fetch the user's data from the server
+        fetchUserData(accessToken);
       }
 
-      document
-        .getElementById("profile-icon-link")
-        .addEventListener("click", () => {
-          const profileCart = document.getElementById("profile-cart");
-          profileCart.style.display =
-            profileCart.style.display === "block" ? "none" : "block";
-        });
+      // Event listener to toggle the visibility of the profile dropdown menu
+      document.getElementById("profile-icon-link").addEventListener("click", toggleProfileDropdown);
 
+      // Event listeners to handle logout from both the main profile section and sidebar
       document.getElementById("logout-btn").addEventListener("click", logout);
-      document
-        .getElementById("logout-sidebar")
-        .addEventListener("click", logout);
+      document.getElementById("logout-sidebar").addEventListener("click", logout);
 
-      function logout() {
-        localStorage.removeItem("user_data");
-        localStorage.removeItem("access_token");
-        window.location.href = "/users/login-page";
-      }
+      // Populate the sidebar and modals with user data after login
+      populateSidebarAndModals();
+
+      // Handle user update form submission for changing personal details (email and phone number)
+      handleUserUpdateForm();
+
+      // Handle password change form submission
+      handleChangePasswordForm();
     });
 
-    //   side bar
-    document.addEventListener("DOMContentLoaded", () => {
-      const token = localStorage.getItem("access_token");
-      const userApiUrl = "/users/user/";
+    // **Redirect the user to the login page**  
+    function redirectToLoginPage() {
+      // Redirect to the login page if the user is not authenticated
+      window.location.href = "/users/login-page";
+    }
 
-      // Fetch user details and populate sidebar and modals
-      fetch(userApiUrl, {
+    // **Fetch user data using the access token**
+    function fetchUserData(accessToken) {
+      // Fetch user data from the server
+      fetch("/users/user/", {
         method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the access token in the request headers
+        },
+      })
+        .then(response => response.json()) // Parse the JSON response from the server
+        .then(data => {
+          if (data) {
+            // If data is received, save it to localStorage and update the profile section
+            saveUserDataToLocalStorage(data);
+            updateProfileSection(data);
+          } else {
+            // If no data is received, alert the user
+            alert("Failed to fetch user data");
+          }
+        })
+        .catch((error) => {
+          // If there's an error during the fetch process, log the error and alert the user
+          console.error("Error:", error);
+          alert("An error occurred while fetching user data.");
+        });
+    }
+
+    // **Save the fetched user data to localStorage for future use**
+    function saveUserDataToLocalStorage(data) {
+      // Store the user data as a stringified JSON object in localStorage
+      localStorage.setItem("user_data", JSON.stringify(data));
+    }
+
+    // **Update the profile section on the page with user data**
+    function updateProfileSection(data) {
+      // Update various elements on the page with the user's details (name, profile image, etc.)
+      document.getElementById("user-name").textContent = data.full_name;
+      document.getElementById("profile-icon").src = data.profile_image || "https://via.placeholder.com/40";
+      document.getElementById("user-name-dropdown").textContent = data.full_name;
+      document.getElementById("user-email-dropdown").textContent = data.email;
+      document.getElementById("user-phone-dropdown").textContent = data.number;
+      document.getElementById("user-role-dropdown").textContent = data.role;
+    }
+
+    // **Toggle the visibility of the profile dropdown**
+    function toggleProfileDropdown() {
+      const profileCart = document.getElementById("profile-cart");
+      // Toggle the display property of the profile dropdown (show or hide)
+      profileCart.style.display = profileCart.style.display === "block" ? "none" : "block";
+    }
+
+    // **Logout the user by clearing stored data and redirecting to login page**
+    function logout() {
+      // Remove user data and access token from localStorage
+      localStorage.removeItem("user_data");
+      localStorage.removeItem("access_token");
+      // Redirect the user to the login page
+      redirectToLoginPage();
+    }
+
+    // **Populate the sidebar and modals with user details**
+    function populateSidebarAndModals() {
+      // Retrieve the access token from localStorage to authenticate the request
+      const token = localStorage.getItem("access_token");
+
+      // Fetch user data to populate the sidebar and modals
+      fetch("/users/user/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass the access token in the request headers
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json()) // Parse the response as JSON
+        .then((data) => {
+          if (data) {
+            // If data is fetched successfully, update the sidebar and modal UI elements
+            updateSidebar(data);
+            updateModal(data);
+            updateUpdateForm(data);
+          }
+        })
+        .catch((error) => console.error("Error:", error)); // Log errors if the fetch fails
+    }
+
+    // **Update sidebar with user data**
+    function updateSidebar(data) {
+      // Populate sidebar with user's full name, email, and role
+      document.getElementById("user-fullname").textContent = data.full_name;
+      document.getElementById("user-email").textContent = data.email;
+      document.getElementById("user-role").textContent = data.role;
+    }
+
+    // **Update modal with user data**
+    function updateModal(data) {
+      // Populate the modal with user's full name, email, role, and phone number
+      document.getElementById("modal-fullname").textContent = data.full_name;
+      document.getElementById("modal-email").textContent = data.email;
+      document.getElementById("modal-role").textContent = data.role;
+      document.getElementById("modal-number").textContent = data.number;
+    }
+
+    // **Populate the update form with the user's current data**
+    function updateUpdateForm(data) {
+      // Pre-fill the form fields with user's current email and phone number
+      document.getElementById("email").value = data.email;
+      document.getElementById("number").value = data.number || ""; // Default to an empty string if the phone number is null
+    }
+
+    // **Handle the user update form submission (for email and phone number updates)**
+    function handleUserUpdateForm() {
+      // Listen for the form submission
+      document.getElementById("update-user-form").addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Get the user ID from localStorage to update the correct user data
+        const userId = JSON.parse(localStorage.getItem("user_data")).id;
+        const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic API endpoint based on user ID
+
+        // Collect the form data (email and phone number)
+        const userData = {
+          email: document.getElementById("email").value,
+          number: document.getElementById("number").value,
+        };
+
+        // Send a PUT request to update the user's details on the server
+        updateUserDetails(updateApiUrl, userData);
+      });
+    }
+
+    // **Send the PUT request to update the user's details**
+    function updateUserDetails(updateApiUrl, userData) {
+      // Retrieve the access token from localStorage for authentication
+      const token = localStorage.getItem("access_token");
+
+      // Send the PUT request to the API to update the user's data
+      fetch(updateApiUrl, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(userData), // Send the updated user data in the request body
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-
-          // Populate sidebar
-          document.getElementById("user-fullname").textContent =
-            data.full_name;
-          document.getElementById("user-email").textContent = data.email;
-          document.getElementById("user-role").textContent = data.role;
-
-          // Populate profile modal
-          document.getElementById("modal-fullname").textContent =
-            data.full_name;
-          document.getElementById("modal-email").textContent = data.email;
-          document.getElementById("modal-role").textContent = data.role;
-          document.getElementById("modal-number").textContent = data.number;
-          // Populate update form
-          document.getElementById("email").value = data.email;
-          document.getElementById("number").value = data.number || "";
-
-          // Store user ID in a variable for later use
-          const userId = data.id;
-
-          // Add event listener to the update form
-          // Add event listener to the update form
-          document
-            .getElementById("update-user-form")
-            .addEventListener("submit", (event) => {
-              event.preventDefault();
-
-              const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic URL based on user ID
-
-              // Collect form data
-              const userData = {
-                email: document.getElementById("email").value,
-                //   password: document.getElementById("password").value, // Assuming a password field exists
-                number: document.getElementById("number").value,
-              };
-
-              // Send PUT request
-              fetch(updateApiUrl, {
-                method: "PUT", // Changed to PUT
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userData),
-              })
-                .then((response) => response.json())
-                .then(() => {
-                  alert("Details updated successfully!");
-                  window.location.reload(); // Refresh to reflect changes
-                });
-            });
+        .then((response) => response.json()) // Parse the JSON response
+        .then(() => {
+          // Show an alert and reload the page after a successful update
+          alert("Details updated successfully!");
+          window.location.reload(); // Refresh the page to reflect changes
+        })
+        .catch((error) => {
+          console.error("Error:", error); // Log any errors
+          alert("An error occurred while updating the details."); // Show an error message
         });
+    }
 
-      // Change Password
-      document
-        .getElementById("change-password-form")
-        .addEventListener("submit", (event) => {
-          event.preventDefault();
+    // **Handle password change form submission**
+    function handleChangePasswordForm() {
+      // Listen for the form submission
+      document.getElementById("change-password-form").addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
 
-          const token = localStorage.getItem("access_token");
-          const apiUrl = "/users/change-password/";
+        // Collect the password change data (old password, new password, confirm new password)
+        const passwordData = {
+          old_password: document.getElementById("old-password").value,
+          new_password: document.getElementById("new-password").value,
+          confirm_password: document.getElementById("confirm-password").value,
+        };
 
-          // Collect password data
-          const passwordData = {
-            old_password: document.getElementById("old-password").value,
-            new_password: document.getElementById("new-password").value,
-            confirm_password:
-              document.getElementById("confirm-password").value,
-          };
+        // Send the password change request if the data is valid
+        changePassword(passwordData);
+      });
+    }
 
-          // Basic validation
-          if (
-            !passwordData.old_password ||
-            !passwordData.new_password ||
-            !passwordData.confirm_password
-          ) {
-            alert("All fields are required.");
-            return;
-          }
+    // **Send the password change request to the server**
+    function changePassword(passwordData) {
+      const token = localStorage.getItem("access_token");
+      const apiUrl = "/users/change-password/";
 
-          if (passwordData.new_password !== passwordData.confirm_password) {
-            alert("New password and confirm password do not match.");
-            return;
-          }
-
-          // Log the data for debugging
-          console.log("Sending data:", passwordData);
-
-          fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(passwordData),
+      // Validate the password data before sending the request
+      if (validatePasswordData(passwordData)) {
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(passwordData), // Send the password data in the request body
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.detail || "Failed to change password.");
+              });
+            }
+            return response.json();
           })
-            .then((response) => {
-              if (!response.ok) {
-                return response.json().then((data) => {
-                  throw new Error(
-                    data.detail || "Failed to change password."
-                  );
-                });
-              }
-              return response.json();
-            })
-            .then(() => {
-              alert("Password changed successfully!");
-              // Optionally, clear the form
-              document.getElementById("change-password-form").reset();
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert(error.message || "An unknown error occurred.");
-            });
-        });
-    });
+          .then(() => {
+            // Show a success message and reset the password form
+            alert("Password changed successfully!");
+            document.getElementById("change-password-form").reset();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert(error.message || "An unknown error occurred.");
+          });
+      }
+    }
 
+    // **Validate the password data (ensure all fields are filled and match)**
+    function validatePasswordData(passwordData) {
+      // Check if all password fields are filled
+      if (!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password) {
+        alert("All fields are required.");
+        return false;
+      }
+
+      // Check if the new password and confirm password match
+      if (passwordData.new_password !== passwordData.confirm_password) {
+        alert("New password and confirm password do not match.");
+        return false;
+      }
+
+      return true; // Return true if all validations pass
+    }
 
     // Fetch the token
     const accessToken = localStorage.getItem("access_token");
@@ -486,7 +556,7 @@
 
     // Function to create a single card
     function createCard(article) {
-  return `
+      return `
     <div class="col-md-6 col-lg-4">
       <div class="card h-100">
         <img src="${article.image_url}" class="card-img-top" alt="${article.title}">
@@ -508,7 +578,7 @@
       </div>
     </div>
   `;
-}
+    }
 
     // Function to render articles into the container]]
     function setupReadMoreButtons(articles) {
@@ -588,52 +658,52 @@
     }
 
     function setupEditContentListeners(articles) {
-  const editButtons = document.querySelectorAll(".edit-content-btn");
-  editButtons.forEach(button => {
-    button.addEventListener("click", (e) => {
-      const articleId = e.target.getAttribute("data-id");
-      const article = articles.find(a => a.id === parseInt(articleId));
+      const editButtons = document.querySelectorAll(".edit-content-btn");
+      editButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+          const articleId = e.target.getAttribute("data-id");
+          const article = articles.find(a => a.id === parseInt(articleId));
 
-      // Populate textarea with the existing content
-      document.getElementById("editContentTextarea").value = article.content;
+          // Populate textarea with the existing content
+          document.getElementById("editContentTextarea").value = article.content;
 
-      // Show the modal
-      const modal = new bootstrap.Modal(document.getElementById("editContentModal"));
-      modal.show();
+          // Show the modal
+          const modal = new bootstrap.Modal(document.getElementById("editContentModal"));
+          modal.show();
 
-      // Handle form submission
-      const form = document.getElementById("editContentForm");
-      form.onsubmit = async (event) => {
-        event.preventDefault();
-        const updatedContent = document.getElementById("editContentTextarea").value;
+          // Handle form submission
+          const form = document.getElementById("editContentForm");
+          form.onsubmit = async (event) => {
+            event.preventDefault();
+            const updatedContent = document.getElementById("editContentTextarea").value;
 
-        try {
-          // Send only the content in the PATCH request
-          const response = await fetch(`/articles/${article.id}/`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({ content: updatedContent }) // only update content
-          });
+            try {
+              // Send only the content in the PATCH request
+              const response = await fetch(`/articles/${article.id}/`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({ content: updatedContent }) // only update content
+              });
 
-          if (response.ok) {
-            alert("Content updated successfully!");
-            modal.hide();
+              if (response.ok) {
+                alert("Content updated successfully!");
+                modal.hide();
 
-            // Update the UI dynamically
-            document.getElementById(`content-${article.id}`).textContent = updatedContent.slice(0, 100) + "...";
-          } else {
-            alert("Failed to update content.");
-          }
-        } catch (error) {
-          console.error("Error updating content:", error);
-        }
-      };
-    });
-  });
-}
+                // Update the UI dynamically
+                document.getElementById(`content-${article.id}`).textContent = updatedContent.slice(0, 100) + "...";
+              } else {
+                alert("Failed to update content.");
+              }
+            } catch (error) {
+              console.error("Error updating content:", error);
+            }
+          };
+        });
+      });
+    }
 
     function renderArticles(articles) {
       const container = document.getElementById("articles-container");

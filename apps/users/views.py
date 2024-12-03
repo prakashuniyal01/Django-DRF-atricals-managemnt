@@ -1,7 +1,7 @@
 # views.py
 import random
 from django.core.mail import send_mail
-from rest_framework import status
+from rest_framework import  status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -19,9 +19,101 @@ from .serializers import UserRegistrationSerializer, OTPVerificationSerializer, 
 from django.utils.translation import gettext_lazy as _
 import logging
 
-logger = logging.getLogger(__name__)
-# user registration view
 
+logger = logging.getLogger(__name__)
+
+# Admin User CRUD Operations View
+class AdminUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """ Get all users' details - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to view all users."}, status=status.HTTP_403_FORBIDDEN)
+
+        users = User.objects.all()
+        serializer = UserUpdateSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """ Create a new user - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to create a user."}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            serializer = UserRegistrationSerializer(data=request.data)
+            if serializer.is_valid():
+                user = serializer.save()
+                return Response({"message": "User created successfully.", "user": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request, user_id):
+        """ Update a user's details - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to update this user's details."}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserUpdateSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, user_id):
+        """ Partially update a user's details - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to update this user's details."}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, user_id):
+        """ Delete a user - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to delete this user."}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+            user.delete()
+            return Response({"detail": "User deleted successfully."}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def change_password(self, request, user_id):
+        """ Change a user's password - Admin only """
+        if not request.user.is_superuser:
+            return Response({"detail": "You are not authorized to change this user's password."}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            new_password = serializer.validated_data['new_password']
+            user.set_password(new_password)
+            user.save()
+            return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# user registration view
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
