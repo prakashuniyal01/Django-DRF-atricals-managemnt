@@ -38,4 +38,5 @@ urlpatterns = [
     # admins crud should
     path('admin/users/', AdminUserView.as_view(), name='admin-users-list'),  # For listing users
     path('admin/users/<int:user_id>/', AdminUserView.as_view(), name='admin-user-detail'),  # For updating, deleting, or changing password for a user
+    # path('admin/users/<int:user_id>/change-password/', ChangePasswordView.as_view(), name='change-password'),
 ]

@@ -48,3 +48,18 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.author == request.user or request.user.is_staff
+    
+class IsAdminOnly(BasePermission):
+    """
+    Custom permission to allow only Admin users to perform any action.
+    """
+    def has_permission(self, request, view):
+        # Allow GET requests to all authenticated users
+        if request.method == 'GET':
+            return True
+        
+        # For all other methods (POST, PUT, DELETE), allow only Admins
+        if request.user.is_authenticated:
+            return request.user.is_superuser  # Only Admins (is_staff=True) can modify data
+        
+        return False

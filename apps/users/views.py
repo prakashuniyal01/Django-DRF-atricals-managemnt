@@ -26,14 +26,27 @@ logger = logging.getLogger(__name__)
 class AdminUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        """ Get all users' details - Admin only """
+    def get(self, request, user_id=None):
+        """ Get user(s) details - Admin only """
         if not request.user.is_superuser:
-            return Response({"detail": "You are not authorized to view all users."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail": "You are not authorized to view this information."}, status=status.HTTP_403_FORBIDDEN)
 
-        users = User.objects.all()
-        serializer = UserUpdateSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            if user_id:
+                # Fetch a single user's details
+                user = User.objects.get(id=user_id)
+                serializer = UserUpdateSerializer(user)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                # Fetch all users
+                users = User.objects.all()
+                serializer = UserUpdateSerializer(users, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"detail": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def post(self, request):
         """ Create a new user - Admin only """
@@ -93,26 +106,48 @@ class AdminUserView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def change_password(self, request, user_id):
-        """ Change a user's password - Admin only """
-        if not request.user.is_superuser:
-            return Response({"detail": "You are not authorized to change this user's password."}, status=status.HTTP_403_FORBIDDEN)
+    # def change_password(self, request, user_id):
+    #     """ Change a user's password - Admin only """
+    #     if not request.user.is_superuser:
+    #         return Response({"detail": "You are not authorized to change this user's password."}, status=status.HTTP_403_FORBIDDEN)
 
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    #     try:
+    #         user = User.objects.get(id=user_id)
+    #     except User.DoesNotExist:
+    #         return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = PasswordChangeSerializer(data=request.data)
-        if serializer.is_valid():
-            new_password = serializer.validated_data['new_password']
-            user.set_password(new_password)
-            user.save()
-            return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+    #     serializer = PasswordChangeSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         new_password = serializer.validated_data['new_password']
+    #         user.set_password(new_password)
+    #         user.save()
+    #         return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# class ChangePasswordView(APIView):
+#     permission_classes = [IsAuthenticated]
 
+#     def post(self, request, user_id):
+#         """ Change a user's password - Admin only """
+#         if not request.user.is_superuser:
+#             return Response(
+#                 {"detail": "You are not authorized to change this user's password."},
+#                 status=status.HTTP_403_FORBIDDEN
+#             )
+
+#         try:
+#             user = User.objects.get(id=user_id)
+#         except User.DoesNotExist:
+#             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+#         serializer = PasswordChangeSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user.set_password(serializer.validated_data['new_password'])
+#             user.save()
+#             return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # user registration view
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]

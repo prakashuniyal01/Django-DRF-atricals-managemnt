@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Comment, Like, Article,Category, Tag
 from .serializers import ArticleSerializer, ArticleCreateUpdateSerializer, CommentSerializer, LikeSerializer,ArticleSearchSerializer
-from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor, IsAuthorOrReadOnly
+from .permissions import IsAdminOrJournalist, IsEditorOrAdmin, IsAdminOrEditor, IsAuthorOrReadOnly,IsAdminOnly
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -15,11 +15,62 @@ from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
 
+permission_classes = [permissions.IsAuthenticated, IsAdminOrEditor]
+
+
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [IsAdminOrEditor] 
 
+class AdminArticleCRUDView(APIView):
+    """
+    API view for Admin to perform CRUD operations on all articles.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsAdminOnly]
+
+    def put(self, request, article_id):
+        """
+        PUT request to update an existing article (restricted to Admins).
+        """
+        try:
+            article = Article.objects.get(id=article_id)  # Use article_id
+            self.check_object_permissions(request, article)
+            serializer = ArticleCreateUpdateSerializer(article, data=request.data, partial=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Article.DoesNotExist:
+            return Response({"error": "Article not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, article_id):
+        """
+        PATCH request to partially update an article (restricted to Admins).
+        """
+        try:
+            article = Article.objects.get(id=article_id)  # Use article_id
+            self.check_object_permissions(request, article)
+            serializer = ArticleCreateUpdateSerializer(article, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Article.DoesNotExist:
+            return Response({"error": "Article not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+    def delete(self, request, article_id):
+        """
+        DELETE request to delete an article (restricted to Admins).
+        """
+        try:
+            article = Article.objects.get(id=article_id)  # Use article_id
+            self.check_object_permissions(request, article)
+            article.delete()
+            return Response({"detail": "Article deleted."}, status=status.HTTP_204_NO_CONTENT)
+        except Article.DoesNotExist:
+            return Response({"error": "Article not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class ArticleListCreateView(generics.ListCreateAPIView):
     """

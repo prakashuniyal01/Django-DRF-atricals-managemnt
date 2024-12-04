@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView, ArticleSearchView,ArticleDetailView
+from .views import ArticleListCreateView, ArticleRetrieveUpdateDestroyView, CommentView, ReplyView, LikeView,ArticleApprovalView, ArticleSearchView,ArticleDetailView,AdminArticleCRUDView
 from django.views.generic import TemplateView
 
 urlpatterns = [
@@ -16,6 +16,11 @@ urlpatterns = [
     path('comments/<int:comment_id>/like/', LikeView.as_view(), name='comment-like'),
     path('articles/<int:article_id>/like/', LikeView.as_view(), name='article-like'),
     
+     # Admin can perform CRUD on all articles
+    # path('admins/articles/', AdminArticleCRUDView.as_view(), name='admin-article-crud'),
+    # path('admins/articles/<int:pk>/', AdminArticleCRUDView.as_view(), name='admin_article_crud'),
+    # path('admins/articles/<int:pk>/', AdminArticleCRUDView.as_view(), name='admin-article-delete'),
+    
     # templates rendering 
-    path('article-page/<int:pk>/', TemplateView.as_view(template_name='article_detail.html'), name='article-detail')
+    path('admins/articles/<int:article_id>/', AdminArticleCRUDView.as_view(), name='admin-article-detail'),
 ]
