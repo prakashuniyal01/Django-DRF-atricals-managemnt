@@ -1,1495 +1,1304 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>admin Dashboard</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .profile-cart {
-        position: absolute;
-        top: 50px;
-        right: 10px;
-        width: 300px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        display: none;
-        z-index: 999;
-      }
 
-      .profile-cart img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 15px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    rel="stylesheet" />
+  <style>
+    .profile-cart {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      width: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      display: none;
+      z-index: 999;
+    }
 
-      #profile-icon {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-      }
+    .profile-cart img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
 
-      footer a:hover {
-        color: #ffd700; /* Gold color on hover */
-      }
-    </style>
-  </head>
+    #profile-icon {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
 
-  <body>
-    <!-- Header -->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <button
-            class="btn btn-primary me-3"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#sidebar"
-            aria-controls="sidebar"
-          >
-            <i class="bi bi-list"></i>
-          </button>
-          <h4>Welcome, <span id="user-name"></span></h4>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-              <li class="nav-item">
-                <a class="nav-link" href="/articles">Articles</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" id="profile-icon-link">
-                  <img
-                    src="https://via.placeholder.com/40"
-                    id="profile-icon"
-                    alt="Profile Icon"
-                  />
-                </a>
-                <div class="profile-cart" id="profile-cart">
-                  <div class="profile-header">
-                    <img
-                      src="https://via.placeholder.com/50"
-                      id="profile-image"
-                      alt="Profile Image"
-                    />
-                    <h5 id="user-name-dropdown"></h5>
-                  </div>
-                  <ul class="profile-details">
-                    <li>
-                      <span>Email:</span> <span id="user-email-dropdown"></span>
-                    </li>
-                    <li>
-                      <span>Phone:</span> <span id="user-phone-dropdown"></span>
-                    </li>
-                    <li>
-                      <span>Role:</span> <span id="user-role-dropdown"></span>
-                    </li>
-                  </ul>
-                  <button class="btn btn-danger btn-logout" id="logout-btn">
-                    Logout
-                  </button>
+    footer a:hover {
+      color: #ffd700;
+      /* Gold color on hover */
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <button class="btn btn-primary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+          aria-controls="sidebar">
+          <i class="bi bi-list"></i>
+        </button>
+        <h4>Welcome, <span id="user-name"></span></h4>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="/articles">Articles</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="profile-icon-link">
+                <img src="https://via.placeholder.com/40" id="profile-icon" alt="Profile Icon" />
+              </a>
+              <div class="profile-cart" id="profile-cart">
+                <div class="profile-header">
+                  <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
+                  <h5 id="user-name-dropdown"></h5>
                 </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <!-- Sidebar -->
-    <div
-      class="offcanvas offcanvas-start"
-      tabindex="-1"
-      id="sidebar"
-      aria-labelledby="sidebarLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 id="sidebarLabel">Menu</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <!-- User Profile Section -->
-        <div id="user-profile" class="mb-3">
-          <h6>Welcome, <span id="user-fullname">User</span></h6>
-          <p>Email: <span id="user-email"></span></p>
-          <p>Role: <span id="user-role"></span></p>
-        </div>
-        <ul class="list-group">
-          <li class="list-group-item">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal"
-              >Profile Settings</a
-            >
-          </li>
-          <li class="list-group-item">
-            <a
-              href="#"
-              data-bs-toggle="modal"
-              data-bs-target="#updateDetailsModal"
-              >Update Details</a
-            >
-          </li>
-          <li class="list-group-item">
-            <a
-              href="#"
-              data-bs-toggle="modal"
-              data-bs-target="#changePasswordModal"
-              >Change Password</a
-            >
-          </li>
-          <li class="list-group-item">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#createUserModal"
-              >Create User</a
-            >
-          </li>
-          <li class="list-group-item">
-            <a href="#" id="logout-sidebar">Logout</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Modals -->
-
-    <!-- Profile Modal -->
-    <div
-      class="modal fade"
-      id="profileModal"
-      tabindex="-1"
-      aria-labelledby="profileModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Full Name:</strong> <span id="modal-fullname"></span></p>
-            <p><strong>Email:</strong> <span id="modal-email"></span></p>
-            <p><strong>Role:</strong> <span id="modal-role"></span></p>
-            <p><strong>Number</strong> <span id="modal-number"></span></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Update Details Modal -->
-    <div
-      class="modal fade"
-      id="updateDetailsModal"
-      tabindex="-1"
-      aria-labelledby="updateDetailsModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="updateDetailsModalLabel">
-              Update Details
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="update-user-form">
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" required />
+                <ul class="profile-details">
+                  <li>
+                    <span>Email:</span> <span id="user-email-dropdown"></span>
+                  </li>
+                  <li>
+                    <span>Phone:</span> <span id="user-phone-dropdown"></span>
+                  </li>
+                  <li>
+                    <span>Role:</span> <span id="user-role-dropdown"></span>
+                  </li>
+                </ul>
+                <button class="btn btn-danger btn-logout" id="logout-btn">
+                  Logout
+                </button>
               </div>
-              <div class="mb-3">
-                <label for="number" class="form-label">Phone Number</label>
-                <input
-                  type="number"
-                  id="number"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-primary">
-                Save Changes
-              </button>
-            </form>
-          </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Sidebar -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header">
+      <h5 id="sidebarLabel">Menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- User Profile Section -->
+      <div id="user-profile" class="mb-3">
+        <h6>Welcome, <span id="user-fullname">User</span></h6>
+        <p>Email: <span id="user-email"></span></p>
+        <p>Role: <span id="user-role"></span></p>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile Settings</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#updateDetailsModal">Update Details</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#createUserModal">Create User</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" id="logout-sidebar">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modals -->
+
+  <!-- Profile Modal -->
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Full Name:</strong> <span id="modal-fullname"></span></p>
+          <p><strong>Email:</strong> <span id="modal-email"></span></p>
+          <p><strong>Role:</strong> <span id="modal-role"></span></p>
+          <p><strong>Number</strong> <span id="modal-number"></span></p>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Change Password Modal -->
-    <div
-      class="modal fade"
-      id="changePasswordModal"
-      tabindex="-1"
-      aria-labelledby="changePasswordModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="changePasswordModalLabel">
+  <!-- Update Details Modal -->
+  <div class="modal fade" id="updateDetailsModal" tabindex="-1" aria-labelledby="updateDetailsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateDetailsModalLabel">
+            Update Details
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="update-user-form">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="number" class="form-label">Phone Number</label>
+              <input type="number" id="number" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">
+            Change Password
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="change-password-form">
+            <div class="mb-3">
+              <label for="old-password" class="form-label">Old Password</label>
+              <input type="password" id="old-password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="new-password" class="form-label">New Password</label>
+              <input type="password" id="new-password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="confirm-password" class="form-label">Confirm Password</label>
+              <input type="password" id="confirm-password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">
               Change Password
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="change-password-form">
-              <div class="mb-3">
-                <label for="old-password" class="form-label"
-                  >Old Password</label
-                >
-                <input
-                  type="password"
-                  id="old-password"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="new-password" class="form-label"
-                  >New Password</label
-                >
-                <input
-                  type="password"
-                  id="new-password"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="confirm-password" class="form-label"
-                  >Confirm Password</label
-                >
-                <input
-                  type="password"
-                  id="confirm-password"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-primary">
-                Change Password
-              </button>
-            </form>
-          </div>
+            </button>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Create User Modal -->
-    <!-- Create User Modal -->
-    <div
-      class="modal fade"
-      id="createUserModal"
-      tabindex="-1"
-      aria-labelledby="createUserModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="create-user-form">
-              <div class="mb-3">
-                <label for="create-email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="create-email"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="create-full-name" class="form-label"
-                  >Full Name</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="create-full-name"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="create-password" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="create-password"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="create-confirm-password" class="form-label"
-                  >Confirm Password</label
-                >
-                <input
-                  type="password"
-                  class="form-control"
-                  id="create-confirm-password"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="create-role" class="form-label">Role</label>
-                <select class="form-control" id="create-role" required>
-                  <option value="user">User</option>
-                  <option value="editor">Editor</option>
-                  <option value="journalist">Journalist</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="create-number" class="form-label"
-                  >Phone Number</label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="create-number"
-                  maxlength="12"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                id="create-user-submit"
-                class="btn btn-primary"
-              >
-                Create User
-              </button>
-            </form>
-          </div>
+  <!-- Create User Modal -->
+  <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="create-user-form">
+            <div class="mb-3">
+              <label for="create-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="create-email" required />
+            </div>
+            <div class="mb-3">
+              <label for="create-full-name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="create-full-name" required />
+            </div>
+            <div class="mb-3">
+              <label for="create-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="create-password" required />
+            </div>
+            <div class="mb-3">
+              <label for="create-confirm-password" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="create-confirm-password" required />
+            </div>
+            <div class="mb-3">
+              <label for="create-role" class="form-label">Role</label>
+              <select class="form-control" id="create-role" required>
+                <option value="user">User</option>
+                <option value="editor">Editor</option>
+                <option value="journalist">Journalist</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="create-number" class="form-label">Phone Number</label>
+              <input type="number" class="form-control" id="create-number" maxlength="12" required />
+            </div>
+            <button type="submit" id="create-user-submit" class="btn btn-primary">
+              Create User
+            </button>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- OTP Verification Modal -->
-    <div
-      class="modal fade"
-      id="verifyOtpModal"
-      tabindex="-1"
-      aria-labelledby="verifyOtpModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="verifyOtpModalLabel">Verify OTP</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="verify-otp-form">
-              <div class="mb-3">
-                <label for="otp-email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="otp-email"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="otp" class="form-label">OTP</label>
-                <input type="text" class="form-control" id="otp" required />
-              </div>
-              <button
-                type="submit"
-                id="verify-otp-submit"
-                class="btn btn-primary"
-              >
-                Verify OTP
-              </button>
-            </form>
-          </div>
+  <!-- OTP Verification Modal -->
+  <div class="modal fade" id="verifyOtpModal" tabindex="-1" aria-labelledby="verifyOtpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="verifyOtpModalLabel">Verify OTP</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="verify-otp-form">
+            <div class="mb-3">
+              <label for="otp-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="otp-email" required />
+            </div>
+            <div class="mb-3">
+              <label for="otp" class="form-label">OTP</label>
+              <input type="text" class="form-control" id="otp" required />
+            </div>
+            <button type="submit" id="verify-otp-submit" class="btn btn-primary">
+              Verify OTP
+            </button>
+          </form>
         </div>
       </div>
     </div>
-    <!-- Dashboard Content -->
-    <main class="mt-4 container dashboard-container">
-      <div
-        class="banner text-center p-5"
-        style="
+  </div>
+  <!-- Dashboard Content -->
+  <main class="mt-4 container dashboard-container">
+    <div class="banner text-center p-5" style="
           background: url('https://via.placeholder.com/1200x400') no-repeat
             center/cover;
           color: #fff;
-        "
-      >
-        <h1>Welcome</h1>
-        <p class="lead">Discover, read, and manage articles seamlessly.</p>
-        <a href="#articles-container" class="btn btn-primary btn-lg"
-          >Explore Articles</a
-        >
-      </div>
-    </main>
-    <!-- Main container for the user list -->
-    <div class="container mt-5">
-      <h1 class="text-center mb-4">User List</h1>
-
-      <div id="user-list">
-        <!-- User data will be dynamically inserted here -->
-      </div>
-
-      <!-- Update User Modal -->
-      <div
-        class="modal fade"
-        id="updateModal"
-        tabindex="-1"
-        aria-labelledby="updateModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="updateModalLabel">Update User</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <form id="update-form">
-                <div class="mb-3">
-                  <label for="full-name" class="form-label">Full Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="full-name"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="email-modal" class="form-label">Email</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email-modal"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="number-modal" class="form-label"
-                    >Phone Number</label
-                  >
-                  <input
-                    type="number"
-                    maxlength="12"
-                    class="form-control"
-                    id="number-modal"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="role" class="form-label">Role</label>
-                  <select class="form-control" id="role" required>
-                    <option value="journalist">Journalist</option>
-                    <option value="editor">Editor</option>
-                    <option value="user">User</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="is-active" class="form-label"
-                    >Active Status</label
-                  >
-                  <select class="form-control" id="is-active" required>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="is-staff" class="form-label">Staff Status</label>
-                  <select class="form-control" id="is-staff" required>
-                    <option value="true">Staff</option>
-                    <option value="false">Non-Staff</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+        ">
+      <h1>Welcome</h1>
+      <p class="lead">Discover, read, and manage articles seamlessly.</p>
+      <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
     </div>
-    <!-- =========================================== articles related ====================================================== -->
-    <!-- articles data loads  -->
-    <div
-      class="modal fade"
-      id="editArticleModal"
-      tabindex="-1"
-      aria-labelledby="editArticleModalLabel"
-      aria-hidden="true"
-    >
+  </main>
+  <!-- Main container for the user list -->
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">User List</h1>
+    <div>
+      <label for="role-filter">Filter by Role: </label>
+      <select id="role-filter" class="form-select">
+        <option value="">All Roles</option>
+        <option value="editor">Editor</option>
+        <option value="journalist">Journalist</option>
+        <option value="user">User</option>
+      </select>
+    </div>
+    <div id="user-list"></div>
+
+    <div id="user-list">
+      <!-- User data will be dynamically inserted here -->
+    </div>
+
+    <!-- Update User Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editArticleModalLabel">Edit Article</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <h5 class="modal-title" id="updateModalLabel">Update User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="editArticleForm">
-              <!-- Hidden input to store article ID -->
-              <input type="hidden" id="articleId" />
-
+            <form id="update-form">
               <div class="mb-3">
-                <label for="articleTitle" class="form-label">Title</label>
-                <input type="text" class="form-control" id="articleTitle" />
+                <label for="full-name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="full-name" required />
               </div>
               <div class="mb-3">
-                <label for="articleStatus" class="form-label">Status</label>
-                <select class="form-control" id="articleStatus">
-                  <option value="draft">Draft</option>
-                  <option value="pending">Pending Review</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="published">Published</option>
+                <label for="email-modal" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email-modal" required />
+              </div>
+              <div class="mb-3">
+                <label for="number-modal" class="form-label">Phone Number</label>
+                <input type="number" maxlength="12" class="form-control" id="number-modal" required />
+              </div>
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-control" id="role" required>
+                  <option value="journalist">Journalist</option>
+                  <option value="editor">Editor</option>
+                  <option value="user">User</option>
                 </select>
               </div>
               <div class="mb-3">
-                <label for="articleContent" class="form-label">Content</label>
-                <textarea
-                  class="form-control"
-                  id="articleContent"
-                  rows="3"
-                ></textarea>
+                <label for="is-active" class="form-label">Active Status</label>
+                <select class="form-control" id="is-active" required>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
               </div>
               <div class="mb-3">
-                <label for="articleCategories" class="form-label"
-                  >Categories</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="articleCategories"
-                />
+                <label for="is-staff" class="form-label">Staff Status</label>
+                <select class="form-control" id="is-staff" required>
+                  <option value="true">Staff</option>
+                  <option value="false">Non-Staff</option>
+                </select>
               </div>
-              <div class="mb-3">
-                <label for="articleTags" class="form-label">Tags</label>
-                <input type="text" class="form-control" id="articleTags" />
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger"
-                  id="deleteArticleBtn"
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="saveChangesBtn"
-                >
-                  Save Changes
-                </button>
-              </div>
+              <button type="submit" class="btn btn-primary">Update</button>
             </form>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Table for displaying articles -->
-    <div class=" text-center container mt-4">
-      <h4>articles data</h4>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Author</th>
-            <th>Author Mail</th>
-            <th>Title</th>
-            <th>Subtitle</th>
-            <th>Content</th>
-            <th>Status</th>
-            <th>Publish Date</th>
-            <th>Categories</th>
-            <th>Tags</th>
-            <th>Approved At</th>
-            <th>Image</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="articlesTableBody">
-          <!-- Articles will be appended here dynamically -->
-        </tbody>
-      </table>
-        <!-- Load More button -->
-    <button id="loadMoreBtn" class="btn btn-primary mt-4">Load More</button>
-    </div>
-  
-
-    <!-- ======================================== footer ====================================== -->
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-      <div class="container">
-        <div class="row">
-          <!-- About Section -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">About Us</h5>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-              convallis felis orci, nec sollicitudin urna pellentesque at.
-              Integer euismod pharetra metus, at efficitur nunc facilisis id.
-            </p>
-          </div>
-
-          <!-- Contact Section -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">Contact Us</h5>
-            <ul class="list-unstyled">
-              <li>
-                <i class="bi bi-house-door"></i> Address: 1234 Main Street,
-                City, Country
-              </li>
-              <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
-              <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
-            </ul>
-          </div>
-
-          <!-- Social Media Links -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">Follow Us</h5>
-            <div class="d-flex">
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-facebook"></i> Facebook</a
-              >
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-twitter"></i> Twitter</a
-              >
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-linkedin"></i> LinkedIn</a
-              >
-              <a href="#" class="btn btn-outline-light"
-                ><i class="bi bi-instagram"></i> Instagram</a
-              >
-            </div>
-          </div>
+  </div>
+  <!-- =========================================== articles related ====================================================== -->
+  <!-- articles data loads  -->
+  <div class="modal fade" id="editArticleModal" tabindex="-1" aria-labelledby="editArticleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editArticleModalLabel">Edit Article</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <hr class="my-4 border-light" />
-        <div class="text-center">
-          <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
+        <div class="modal-body">
+          <form id="editArticleForm">
+            <!-- Hidden input to store article ID -->
+            <input type="hidden" id="articleId" />
+
+            <div class="mb-3">
+              <label for="articleTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="articleTitle" />
+            </div>
+            <div class="mb-3">
+              <label for="articleStatus" class="form-label">Status</label>
+              <select class="form-control" id="articleStatus">
+                <option value="draft">Draft</option>
+                <option value="pending">Pending Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="articleContent" class="form-label">Content</label>
+              <textarea class="form-control" id="articleContent" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="articleCategories" class="form-label">Categories</label>
+              <input type="text" class="form-control" id="articleCategories" />
+            </div>
+            <div class="mb-3">
+              <label for="articleTags" class="form-label">Tags</label>
+              <input type="text" class="form-control" id="articleTags" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="button" class="btn btn-danger" id="deleteArticleBtn">
+                Delete
+              </button>
+              <button type="button" class="btn btn-primary" id="saveChangesBtn">
+                Save Changes
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </footer>
+    </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  <!-- Table for displaying articles -->
+  <div class=" text-center container mt-4">
+    <h4>articles data</h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Author</th>
+          <th>Author Mail</th>
+          <th>Title</th>
+          <th>Subtitle</th>
+          <th>Content</th>
+          <th>Status</th>
+          <th>Publish Date</th>
+          <th>Categories</th>
+          <th>Tags</th>
+          <th>Approved At</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="articlesTableBody">
+        <!-- Articles will be appended here dynamically -->
+      </tbody>
+    </table>
+    <!-- Load More button -->
+    <button id="loadMoreBtn" class="btn btn-primary mt-4">Load More</button>
+  </div>
+
+
+  <!-- ======================================== footer ====================================== -->
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <!-- About Section -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">About Us</h5>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+            convallis felis orci, nec sollicitudin urna pellentesque at.
+            Integer euismod pharetra metus, at efficitur nunc facilisis id.
+          </p>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">Contact Us</h5>
+          <ul class="list-unstyled">
+            <li>
+              <i class="bi bi-house-door"></i> Address: 1234 Main Street,
+              City, Country
+            </li>
+            <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
+            <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
+          </ul>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">Follow Us</h5>
+          <div class="d-flex">
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-facebook"></i> Facebook</a>
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-twitter"></i> Twitter</a>
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-linkedin"></i> LinkedIn</a>
+            <a href="#" class="btn btn-outline-light"><i class="bi bi-instagram"></i> Instagram</a>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4 border-light" />
+      <div class="text-center">
+        <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    const accessToken = localStorage.getItem("access_token");
+
+    /**
+     * ========================= validation  ==========================
+     * email validation
+     * number number
+     * name
+     * password
+     */
+    function regexMail(email) {
+      const messages = [];
+
+      // 1. Check if input is empty
+      if (!email) {
+        messages.push("Email address cannot be empty.");
+        return { isValid: false, messages };
+      }
+
+      // 2. Format Check (basic regex)
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        messages.push("Invalid email format. Please provide a valid email.");
+      }
+
+      // 3. Length Validation
+      if (email.length > 254) {
+        messages.push("Email address is too long. Maximum length is 254 characters.");
+      }
+
+      // 4. Local part length check
+      const localPart = email.split("@")[0];
+      if (localPart.length > 64) {
+        messages.push("Local part of the email (before '@') is too long. Maximum is 64 characters.");
+      }
+
+      // 5. Check for consecutive dots
+      if (email.includes("..")) {
+        messages.push("Email address cannot contain consecutive dots ('..').");
+      }
+
+      // 6. Top-Level Domain Check
+      const domain = email.split("@")[1];
+      if (domain && !domain.includes(".")) {
+        messages.push("Email domain must contain a '.' (e.g., 'example.com').");
+      }
+
+      // 7. Valid Characters
+      const invalidCharsRegex = /[^a-zA-Z0-9._%+-@]/;
+      if (invalidCharsRegex.test(email)) {
+        messages.push("Email contains invalid characters. Only letters, numbers, '.', '_', '%', '+', and '-' are allowed.");
+      }
+
+      // 8. Optional: DNS Check (Mocked)
+      if (!domain || domain === "test.com") {
+        messages.push("Domain does not seem valid. (e.g., 'test.com' is not allowed)");
+      }
+
+      // Return results
+      const isValid = messages.length === 0;
+      if (isValid) {
+        messages.push("Email is valid!");
+      }
+      return { isValid, messages };
+    }
+    /**
+     * ============================================= side bar start ======================================
+     */
+    // Wait until the document content is fully loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      // Retrieve the access token from localStorage to check if the user is authenticated
       const accessToken = localStorage.getItem("access_token");
 
-      /**
-       * ============================================= side bar start ======================================
-       */
-      // Wait until the document content is fully loaded
-      document.addEventListener("DOMContentLoaded", () => {
-        // Retrieve the access token from localStorage to check if the user is authenticated
-        const accessToken = localStorage.getItem("access_token");
-
-        // If the token does not exist, redirect the user to the login page
-        if (!accessToken) {
-          redirectToLoginPage();
-        } else {
-          // If the token is present, fetch the user's data from the server
-          fetchUserData(accessToken);
-        }
-
-        // Event listener to toggle the visibility of the profile dropdown menu
-        document
-          .getElementById("profile-icon-link")
-          .addEventListener("click", toggleProfileDropdown);
-
-        // Event listeners to handle logout from both the main profile section and sidebar
-        document.getElementById("logout-btn").addEventListener("click", logout);
-        document
-          .getElementById("logout-sidebar")
-          .addEventListener("click", logout);
-
-        // Populate the sidebar and modals with user data after login
-        populateSidebarAndModals();
-
-        // Handle user update form submission for changing personal details (email and phone number)
-        handleUserUpdateForm();
-
-        // Handle password change form submission
-        handleChangePasswordForm();
-      });
-
-      // **Redirect the user to the login page**
-      function redirectToLoginPage() {
-        // Redirect to the login page if the user is not authenticated
-        window.location.href = "/users/login-page";
-      }
-
-      // **Fetch user data using the access token**
-      function fetchUserData(accessToken) {
-        // Fetch user data from the server
-        fetch("/users/user/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Include the access token in the request headers
-          },
-        })
-          .then((response) => response.json()) // Parse the JSON response from the server
-          .then((data) => {
-            if (data) {
-              // If data is received, save it to localStorage and update the profile section
-              saveUserDataToLocalStorage(data);
-              updateProfileSection(data);
-            } else {
-              // If no data is received, alert the user
-              alert("Failed to fetch user data");
-            }
-          })
-          .catch((error) => {
-            // If there's an error during the fetch process, log the error and alert the user
-            console.error("Error:", error);
-            alert("An error occurred while fetching user data.");
-          });
-      }
-
-      // **Save the fetched user data to localStorage for future use**
-      function saveUserDataToLocalStorage(data) {
-        // Store the user data as a stringified JSON object in localStorage
-        localStorage.setItem("user_data", JSON.stringify(data));
-      }
-
-      // **Update the profile section on the page with user data**
-      function updateProfileSection(data) {
-        // Update various elements on the page with the user's details (name, profile image, etc.)
-        document.getElementById("user-name").textContent = data.full_name;
-        document.getElementById("profile-icon").src =
-          data.profile_image || "https://via.placeholder.com/40";
-        document.getElementById("user-name-dropdown").textContent =
-          data.full_name;
-        document.getElementById("user-email-dropdown").textContent = data.email;
-        document.getElementById("user-phone-dropdown").textContent =
-          data.number;
-        document.getElementById("user-role-dropdown").textContent = data.role;
-      }
-
-      // **Toggle the visibility of the profile dropdown**
-      function toggleProfileDropdown() {
-        const profileCart = document.getElementById("profile-cart");
-        // Toggle the display property of the profile dropdown (show or hide)
-        profileCart.style.display =
-          profileCart.style.display === "block" ? "none" : "block";
-      }
-
-      // **Logout the user by clearing stored data and redirecting to login page**
-      function logout() {
-        // Remove user data and access token from localStorage
-        localStorage.removeItem("user_data");
-        localStorage.removeItem("access_token");
-        // Redirect the user to the login page
+      // If the token does not exist, redirect the user to the login page
+      if (!accessToken) {
         redirectToLoginPage();
+      } else {
+        // If the token is present, fetch the user's data from the server
+        fetchUserData(accessToken);
       }
 
-      // **Populate the sidebar and modals with user details**
-      function populateSidebarAndModals() {
-        // Retrieve the access token from localStorage to authenticate the request
-        const token = localStorage.getItem("access_token");
+      // Event listener to toggle the visibility of the profile dropdown menu
+      document
+        .getElementById("profile-icon-link")
+        .addEventListener("click", toggleProfileDropdown);
 
-        // Fetch user data to populate the sidebar and modals
-        fetch("/users/user/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass the access token in the request headers
-            "Content-Type": "application/json",
-          },
+      // Event listeners to handle logout from both the main profile section and sidebar
+      document.getElementById("logout-btn").addEventListener("click", logout);
+      document
+        .getElementById("logout-sidebar")
+        .addEventListener("click", logout);
+
+      // Populate the sidebar and modals with user data after login
+      populateSidebarAndModals();
+
+      // Handle user update form submission for changing personal details (email and phone number)
+      handleUserUpdateForm();
+
+      // Handle password change form submission
+      handleChangePasswordForm();
+    });
+
+    // **Redirect the user to the login page**
+    function redirectToLoginPage() {
+      // Redirect to the login page if the user is not authenticated
+      window.location.href = "/users/login-page";
+    }
+
+    // **Fetch user data using the access token**
+    function fetchUserData(accessToken) {
+      // Fetch user data from the server
+      fetch("/users/user/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the access token in the request headers
+        },
+      })
+        .then((response) => response.json()) // Parse the JSON response from the server
+        .then((data) => {
+          if (data) {
+            // If data is received, save it to localStorage and update the profile section
+            saveUserDataToLocalStorage(data);
+            updateProfileSection(data);
+          } else {
+            // If no data is received, alert the user
+            alert("Failed to fetch user data");
+          }
         })
-          .then((response) => response.json()) // Parse the response as JSON
-          .then((data) => {
-            if (data) {
-              // If data is fetched successfully, update the sidebar and modal UI elements
-              updateSidebar(data);
-              updateModal(data);
-              updateUpdateForm(data);
-            }
-          })
-          .catch((error) => console.error("Error:", error)); // Log errors if the fetch fails
-      }
+        .catch((error) => {
+          // If there's an error during the fetch process, log the error and alert the user
+          console.error("Error:", error);
+          alert("An error occurred while fetching user data.");
+        });
+    }
 
-      // **Update sidebar with user data**
-      function updateSidebar(data) {
-        // Populate sidebar with user's full name, email, and role
-        document.getElementById("user-fullname").textContent = data.full_name;
-        document.getElementById("user-email").textContent = data.email;
-        document.getElementById("user-role").textContent = data.role;
-      }
+    // **Save the fetched user data to localStorage for future use**
+    function saveUserDataToLocalStorage(data) {
+      // Store the user data as a stringified JSON object in localStorage
+      localStorage.setItem("user_data", JSON.stringify(data));
+    }
 
-      // **Update modal with user data**
-      function updateModal(data) {
-        // Populate the modal with user's full name, email, role, and phone number
-        document.getElementById("modal-fullname").textContent = data.full_name;
-        document.getElementById("modal-email").textContent = data.email;
-        document.getElementById("modal-role").textContent = data.role;
-        document.getElementById("modal-number").textContent = data.number;
-      }
+    // **Update the profile section on the page with user data**
+    function updateProfileSection(data) {
+      // Update various elements on the page with the user's details (name, profile image, etc.)
+      document.getElementById("user-name").textContent = data.full_name;
+      document.getElementById("profile-icon").src =
+        data.profile_image || "https://via.placeholder.com/40";
+      document.getElementById("user-name-dropdown").textContent =
+        data.full_name;
+      document.getElementById("user-email-dropdown").textContent = data.email;
+      document.getElementById("user-phone-dropdown").textContent =
+        data.number;
+      document.getElementById("user-role-dropdown").textContent = data.role;
+    }
 
-      // **Populate the update form with the user's current data**
-      function updateUpdateForm(data) {
-        // Pre-fill the form fields with user's current email and phone number
-        document.getElementById("email").value = data.email;
-        document.getElementById("number").value = data.number || ""; // Default to an empty string if the phone number is null
-      }
+    // **Toggle the visibility of the profile dropdown**
+    function toggleProfileDropdown() {
+      const profileCart = document.getElementById("profile-cart");
+      // Toggle the display property of the profile dropdown (show or hide)
+      profileCart.style.display =
+        profileCart.style.display === "block" ? "none" : "block";
+    }
 
-      // **Handle the user update form submission (for email and phone number updates)**
-      function handleUserUpdateForm() {
-        // Listen for the form submission
-        document
-          .getElementById("update-user-form")
-          .addEventListener("submit", (event) => {
-            event.preventDefault(); // Prevent the default form submission behavior
+    // **Logout the user by clearing stored data and redirecting to login page**
+    function logout() {
+      // Remove user data and access token from localStorage
+      localStorage.removeItem("user_data");
+      localStorage.removeItem("access_token");
+      // Redirect the user to the login page
+      redirectToLoginPage();
+    }
 
-            // Get the user ID from localStorage to update the correct user data
-            const userId = JSON.parse(localStorage.getItem("user_data")).id;
-            const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic API endpoint based on user ID
+    // **Populate the sidebar and modals with user details**
+    function populateSidebarAndModals() {
+      // Retrieve the access token from localStorage to authenticate the request
+      const token = localStorage.getItem("access_token");
 
-            // Collect the form data (email and phone number)
-            const userData = {
-              email: document.getElementById("email").value,
-              number: document.getElementById("number").value,
-            };
+      // Fetch user data to populate the sidebar and modals
+      fetch("/users/user/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass the access token in the request headers
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json()) // Parse the response as JSON
+        .then((data) => {
+          if (data) {
+            // If data is fetched successfully, update the sidebar and modal UI elements
+            updateSidebar(data);
+            updateModal(data);
+            updateUpdateForm(data);
+          }
+        })
+        .catch((error) => console.error("Error:", error)); // Log errors if the fetch fails
+    }
 
-            // Send a PUT request to update the user's details on the server
-            updateUserDetails(updateApiUrl, userData);
-          });
-      }
+    // **Update sidebar with user data**
+    function updateSidebar(data) {
+      // Populate sidebar with user's full name, email, and role
+      document.getElementById("user-fullname").textContent = data.full_name;
+      document.getElementById("user-email").textContent = data.email;
+      document.getElementById("user-role").textContent = data.role;
+    }
 
-      // **Send the PUT request to update the user's details**
-      function updateUserDetails(updateApiUrl, userData) {
-        // Retrieve the access token from localStorage for authentication
-        const token = localStorage.getItem("access_token");
+    // **Update modal with user data**
+    function updateModal(data) {
+      // Populate the modal with user's full name, email, role, and phone number
+      document.getElementById("modal-fullname").textContent = data.full_name;
+      document.getElementById("modal-email").textContent = data.email;
+      document.getElementById("modal-role").textContent = data.role;
+      document.getElementById("modal-number").textContent = data.number;
+    }
 
-        // Send the PUT request to the API to update the user's data
-        fetch(updateApiUrl, {
-          method: "PUT",
+    // **Populate the update form with the user's current data**
+    function updateUpdateForm(data) {
+      // Pre-fill the form fields with user's current email and phone number
+      document.getElementById("email").value = data.email;
+      document.getElementById("number").value = data.number || ""; // Default to an empty string if the phone number is null
+    }
+
+    // **Handle the user update form submission (for email and phone number updates)**
+    function handleUserUpdateForm() {
+      // Listen for the form submission
+      document
+        .getElementById("update-user-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent the default form submission behavior
+
+          // Get the user ID from localStorage to update the correct user data
+          const userId = JSON.parse(localStorage.getItem("user_data")).id;
+          const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic API endpoint based on user ID
+
+          // Collect the form data (email and phone number)
+          const userData = {
+            email: document.getElementById("email").value,
+            number: document.getElementById("number").value,
+          };
+
+          // Send a PUT request to update the user's details on the server
+          updateUserDetails(updateApiUrl, userData);
+        });
+    }
+
+    // **Send the PUT request to update the user's details**
+    function updateUserDetails(updateApiUrl, userData) {
+      // Retrieve the access token from localStorage for authentication
+      const token = localStorage.getItem("access_token");
+
+      // Send the PUT request to the API to update the user's data
+      fetch(updateApiUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData), // Send the updated user data in the request body
+      })
+        .then((response) => response.json()) // Parse the JSON response
+        .then(() => {
+          // Show an alert and reload the page after a successful update
+          alert("Details updated successfully!");
+          window.location.reload(); // Refresh the page to reflect changes
+        })
+        .catch((error) => {
+          console.error("Error:", error); // Log any errors
+          alert("An error occurred while updating the details."); // Show an error message
+        });
+    }
+
+    // **Handle password change form submission**
+    function handleChangePasswordForm() {
+      // Listen for the form submission
+      document
+        .getElementById("change-password-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent the default form submission behavior
+
+          // Collect the password change data (old password, new password, confirm new password)
+          const passwordData = {
+            old_password: document.getElementById("old-password").value,
+            new_password: document.getElementById("new-password").value,
+            confirm_password:
+              document.getElementById("confirm-password").value,
+          };
+
+          // Send the password change request if the data is valid
+          changePassword(passwordData);
+        });
+    }
+
+    // **Send the password change request to the server**
+    function changePassword(passwordData) {
+      const token = localStorage.getItem("access_token");
+      const apiUrl = "/users/change-password/";
+
+      // Validate the password data before sending the request
+      if (validatePasswordData(passwordData)) {
+        fetch(apiUrl, {
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(userData), // Send the updated user data in the request body
-        })
-          .then((response) => response.json()) // Parse the JSON response
-          .then(() => {
-            // Show an alert and reload the page after a successful update
-            alert("Details updated successfully!");
-            window.location.reload(); // Refresh the page to reflect changes
-          })
-          .catch((error) => {
-            console.error("Error:", error); // Log any errors
-            alert("An error occurred while updating the details."); // Show an error message
-          });
-      }
-
-      // **Handle password change form submission**
-      function handleChangePasswordForm() {
-        // Listen for the form submission
-        document
-          .getElementById("change-password-form")
-          .addEventListener("submit", (event) => {
-            event.preventDefault(); // Prevent the default form submission behavior
-
-            // Collect the password change data (old password, new password, confirm new password)
-            const passwordData = {
-              old_password: document.getElementById("old-password").value,
-              new_password: document.getElementById("new-password").value,
-              confirm_password:
-                document.getElementById("confirm-password").value,
-            };
-
-            // Send the password change request if the data is valid
-            changePassword(passwordData);
-          });
-      }
-
-      // **Send the password change request to the server**
-      function changePassword(passwordData) {
-        const token = localStorage.getItem("access_token");
-        const apiUrl = "/users/change-password/";
-
-        // Validate the password data before sending the request
-        if (validatePasswordData(passwordData)) {
-          fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(passwordData), // Send the password data in the request body
-          })
-            .then((response) => {
-              if (!response.ok) {
-                return response.json().then((data) => {
-                  throw new Error(data.detail || "Failed to change password.");
-                });
-              }
-              return response.json();
-            })
-            .then(() => {
-              // Show a success message and reset the password form
-              alert("Password changed successfully!");
-              document.getElementById("change-password-form").reset();
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert(error.message || "An unknown error occurred.");
-            });
-        }
-      }
-
-      /**
-       * ============================================= side bar end ======================================
-       */
-      /**
-       * =================================== user releted crud models start ============================================
-       */
-      // Define the endpoint and retrieve the access token from localStorage
-      const apiEndpoint = "/users/admin/users/";
-
-      // Fetch and display users
-      let displayedUsers = 0; // Track how many users have been displayed
-      const batchSize = 2; // Number of users to show per batch
-
-      async function fetchUsers() {
-        if (!accessToken) {
-          alert("Access token not found. Please login.");
-          return;
-        }
-
-        try {
-          const response = await fetch(apiEndpoint, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`Error fetching users: ${response.statusText}`);
-          }
-
-          const users = await response.json();
-          displayUsers(users);
-        } catch (error) {
-          console.error("Error fetching users:", error);
-          alert("Failed to load user data. Please try again later.");
-        }
-      }
-
-      function displayUsers(users) {
-        const userListDiv = document.getElementById("user-list");
-        userListDiv.innerHTML = ""; // Clear existing list
-
-        if (users.length === 0) {
-          userListDiv.innerHTML = "<p>No users found.</p>";
-          return;
-        }
-
-        const ul = document.createElement("ul");
-        ul.classList.add("list-group");
-
-        // Display only a batch of users
-        for (let i = 0; i < Math.min(batchSize, users.length); i++) {
-          const user = users[i];
-          const li = document.createElement("li");
-          li.classList.add(
-            "list-group-item",
-            "d-flex",
-            "justify-content-between",
-            "align-items-center"
-          );
-
-          li.innerHTML = `
-            <div>
-                <strong>${user.full_name}</strong><br>
-                <small>Email: ${user.email}</small><br>
-                <small>Role: ${user.role}</small><br>
-                <small>Phone: ${user.number}</small>
-            </div>
-            <div>
-                <span class="badge ${
-                  user.is_active ? "bg-success" : "bg-danger"
-                }">${user.is_active ? "Active" : "Inactive"}</span>
-                <span class="badge ${
-                  user.is_staff ? "bg-info" : "bg-secondary"
-                }">${user.is_staff ? "Staff" : "Non-Staff"}</span>
-                <button class="btn btn-warning btn-sm ms-2" onclick="openAdminEditModal(${
-                  user.id
-                })">Edit</button>
-                <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${
-                  user.id
-                })">Delete</button>
-            </div>
-          `;
-
-          ul.appendChild(li);
-        }
-
-        userListDiv.appendChild(ul);
-
-        // If there are more users left to display, show "Show More" button
-        if (users.length > batchSize) {
-          const showMoreButton = document.createElement("button");
-          showMoreButton.classList.add("btn", "btn-primary", "mt-3");
-          showMoreButton.innerText = "Show More";
-          showMoreButton.onclick = () => showMore(users);
-          userListDiv.appendChild(showMoreButton);
-        }
-      }
-
-      function showMore(users) {
-        // Increase the number of displayed users by the batch size
-        displayedUsers += batchSize;
-
-        const remainingUsers = users.slice(
-          displayedUsers,
-          displayedUsers + batchSize
-        );
-        const ul = document.querySelector("#user-list ul");
-
-        remainingUsers.forEach((user) => {
-          const li = document.createElement("li");
-          li.classList.add(
-            "list-group-item",
-            "d-flex",
-            "justify-content-between",
-            "align-items-center"
-          );
-
-          li.innerHTML = `
-            <div>
-                <strong>${user.full_name}</strong><br>
-                <small>Email: ${user.email}</small><br>
-                <small>Role: ${user.role}</small><br>
-                <small>Phone: ${user.number}</small>
-            </div>
-            <div>
-                <span class="badge ${
-                  user.is_active ? "bg-success" : "bg-danger"
-                }">${user.is_active ? "Active" : "Inactive"}</span>
-                <span class="badge ${
-                  user.is_staff ? "bg-info" : "bg-secondary"
-                }">${user.is_staff ? "Staff" : "Non-Staff"}</span>
-                <button class="btn btn-warning btn-sm ms-2" onclick="openEditModal(${
-                  user.id
-                })">Edit</button>
-                <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${
-                  user.id
-                })">Delete</button>
-            </div>
-          `;
-          ul.appendChild(li);
-        });
-
-        // If there are still more users left, add the "Show More" button again
-        if (displayedUsers + batchSize < users.length) {
-          const showMoreButton = document.createElement("button");
-          showMoreButton.classList.add("btn", "btn-primary", "mt-3");
-          showMoreButton.innerText = "Show More";
-          showMoreButton.onclick = () => showMore(users);
-          showMoreButton.style.display = "none";
-          document.getElementById("user-list").appendChild(showMoreButton);
-        }
-      }
-
-      // Open edit modal and load current user data
-      function openEditModal(userId) {
-        fetch(`${apiEndpoint}${userId}/`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((user) => {
-            console.log(user); // Log the user details
-            if (user) {
-              // Populate the modal form with user data
-              document.getElementById("full-name").value = user.full_name;
-              document.getElementById("email-modal").value = user.email;
-              document.getElementById("number-modal").value = user.number;
-              document.getElementById("role").value = user.role;
-              document.getElementById("is-active").value =
-                user.is_active.toString();
-              document.getElementById("is-staff").value =
-                user.is_staff.toString();
-
-              // Set the form's submit handler to call updateUser
-              document.getElementById("update-form").onsubmit = (e) => {
-                e.preventDefault();
-                updateUser(userId);
-              };
-
-              // Show the modal
-              new bootstrap.Modal(
-                document.getElementById("updateModal")
-              ).show();
-            }
-          })
-          .catch((error) => {
-            console.error("Error loading user data for edit:", error);
-            alert("Failed to load user data for editing.");
-          });
-      }
-
-      // Update user data via PATCH request
-      function updateUser(userId) {
-        const updatedUser = {
-          full_name: document.getElementById("full-name").value,
-          email: document.getElementById("email-modal").value,
-          number: document.getElementById("number-modal").value,
-          role: document.getElementById("role").value,
-          is_active: document.getElementById("is-active").value === "true",
-          is_staff: document.getElementById("is-staff").value === "true",
-        };
-
-        fetch(`${apiEndpoint}${userId}/`, {
-          method: "PUT", // Use the correct HTTP method for updates
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedUser),
+          body: JSON.stringify(passwordData), // Send the password data in the request body
         })
           .then((response) => {
             if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              return response.json().then((data) => {
+                throw new Error(data.detail || "Failed to change password.");
+              });
             }
             return response.json();
           })
-          .then((data) => {
-            console.log("User updated successfully:", data);
-            alert("User updated successfully!");
-            location.reload(); // Optionally reload the page or refresh the user list
+          .then(() => {
+            // Show a success message and reset the password form
+            alert("Password changed successfully!");
+            document.getElementById("change-password-form").reset();
           })
           .catch((error) => {
-            console.error("Error updating user:", error);
-            alert("Failed to update user.");
+            console.error("Error:", error);
+            alert(error.message || "An unknown error occurred.");
           });
       }
+    }
 
-      // Delete user via DELETE request
-      function deleteUser(userId) {
-        const confirmDelete = confirm(
-          "Are you sure you want to delete this user?"
-        );
-        if (confirmDelete) {
-          fetch(`${apiEndpoint}${userId}/`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(
-                  `Failed to delete user: ${response.statusText}`
-                );
-              }
-              alert("User deleted successfully");
-              fetchUsers(); // Re-fetch the user list
-            })
-            .catch((error) => {
-              console.error("Error deleting user:", error);
-              alert("Failed to delete user. Please try again.");
-            });
-        }
+    /**
+     * ============================================= side bar end ======================================
+     */
+    /**
+     * =================================== user releted crud models start ============================================
+     */
+    // Define the endpoint and retrieve the access token from localStorage
+    const apiEndpoint = "/users/admin/users/";
+
+    // Fetch and display users
+    let displayedUsers = 0; // Track how many users have been displayed
+    const batchSize = 2; // Number of users to show per batch
+
+
+    // Add event listener for role filter dropdown
+    document.getElementById("role-filter").addEventListener("change", fetchUsers);
+
+    // Common function to handle API requests (GET, POST, PUT, DELETE)
+    async function apiRequest(endpoint, method = 'GET', body = null) {
+      // Check if the access token is available
+      if (!accessToken) {
+        alert("Access token not found. Please login.");
+        return;
       }
 
-      // Fetch users on page load
-      window.onload = fetchUsers;
-      /**
-       * =================================== user releted crud models start ============================================
-       */
-      /**
-       * ================ user create model start ==============================
-       */
-      // Utility to handle fetch requests
-
-      async function apiRequest(url, method, body = null) {
-        const accessToken = localStorage.getItem("access_token");
-
-        const headers = {
-          "Content-Type": "application/json",
+      // Define the request options
+      const options = {
+        method,  // HTTP method (GET, POST, PUT, DELETE)
+        headers: {
           Authorization: `Bearer ${accessToken}`,
-        };
+          "Content-Type": "application/json",
+        },
+      };
 
-        const options = {
-          method: method,
-          headers: headers,
-        };
-
-        if (body) {
-          options.body = JSON.stringify(body);
-        }
-
-        try {
-          const response = await fetch(url, options);
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail || "Something went wrong");
-          }
-
-          return await response.json();
-        } catch (error) {
-          throw new Error(error.message || "Network error occurred");
-        }
+      // If there is a body (for PUT, POST), include it in the request
+      if (body) {
+        options.body = JSON.stringify(body);
       }
 
-      // Create User Form Submission
-      // Create User Form Submission
-      document
-        .getElementById("create-user-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+      try {
+        // Make the API request
+        const response = await fetch(endpoint, options);
 
-          // Collect form data
-          const email = document.getElementById("create-email").value;
-          const fullName = document.getElementById("create-full-name").value;
-          const password = document.getElementById("create-password").value;
-          const confirmPassword = document.getElementById(
-            "create-confirm-password"
-          ).value;
-          const role = document.getElementById("create-role").value;
-          const number = document.getElementById("create-number").value;
-
-          // Reset any previous error message
-          const errorMessageElement =
-            document.getElementById("create-user-error");
-          if (errorMessageElement) {
-            errorMessageElement.innerHTML = "";
-          }
-
-          // Validate fields before submitting
-          if (password !== confirmPassword) {
-            alert("Passwords do not match");
-            return;
-          }
-
-          const payload = {
-            email,
-            full_name: fullName,
-            password,
-            confirm_password: confirmPassword,
-            role,
-            number,
-          };
-
-          try {
-            // Disable submit button and show loading state
-            const submitButton = document.getElementById("create-user-submit");
-            submitButton.disabled = true;
-            submitButton.innerText = "Creating User...";
-
-            const data = await apiRequest(
-              "/users/admin/users/",
-              "POST",
-              payload
-            );
-
-            // Save the email in localStorage (or a global variable)
-            localStorage.setItem("createdUserEmail", email);
-
-            alert("User created successfully!");
-
-            // Reset the form
-            document.getElementById("create-user-form").reset();
-
-            // Show OTP verification modal
-            const verifyOtpModal = new bootstrap.Modal(
-              document.getElementById("verifyOtpModal")
-            );
-            verifyOtpModal.show();
-
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerText = "Create User";
-          } catch (error) {
-            // Show error message
-            const errorMessageElement =
-              document.getElementById("create-user-error");
-            if (errorMessageElement) {
-              errorMessageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
-            }
-
-            // Re-enable submit button
-            const submitButton = document.getElementById("create-user-submit");
-            submitButton.disabled = false;
-            submitButton.innerText = "Create User";
-          }
-        });
-
-      // OTP Verification Form Submission
-      // OTP Verification Form Submission
-      document
-        .getElementById("verify-otp-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          // Collect OTP data
-          const email = document.getElementById("otp-email").value;
-          const otp = document.getElementById("otp").value;
-
-          // Validate OTP field
-          if (!otp) {
-            alert("Please enter the OTP");
-            return;
-          }
-
-          const payload = { email, otp };
-
-          try {
-            // Disable submit button and show loading state
-            const submitButton = document.getElementById("verify-otp-submit");
-            submitButton.disabled = true;
-            submitButton.innerText = "Verifying OTP...";
-
-            const data = await apiRequest(
-              "/users/register-verify-otp/",
-              "POST",
-              payload
-            );
-
-            alert("OTP verified successfully!");
-
-            // Hide OTP verification modal
-            const verifyOtpModal = bootstrap.Modal.getInstance(
-              document.getElementById("verifyOtpModal")
-            );
-            verifyOtpModal.hide();
-
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerText = "Verify OTP";
-          } catch (error) {
-            // Show error message
-            const errorMessageElement =
-              document.getElementById("verify-otp-error");
-            if (errorMessageElement) {
-              errorMessageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
-            }
-
-            // Re-enable submit button
-            const submitButton = document.getElementById("verify-otp-submit");
-            submitButton.disabled = false;
-            submitButton.innerText = "Verify OTP";
-          }
-        });
-
-      // Pre-fill email field for OTP form
-      document.addEventListener("DOMContentLoaded", () => {
-        const createdUserEmail = localStorage.getItem("createdUserEmail");
-        if (createdUserEmail) {
-          document.getElementById("otp-email").value = createdUserEmail;
+        // Check if the response is OK (status 200-299)
+        if (!response.ok) {
+          throw new Error(`Error fetching data: ${response.statusText}`);
         }
+
+        // Return the JSON response data
+        return await response.json();
+      } catch (error) {
+        console.error("API Request Error:", error);
+        alert("Failed to load data. Please try again later.");
+      }
+    }
+
+    // Fetch users and display them with optional filtering by role
+    async function fetchUsers() {
+      const roleFilter = document.getElementById("role-filter").value; // Get selected role filter
+
+      try {
+        // Call API to fetch users
+        const users = await apiRequest(apiEndpoint);
+
+        // Filter users based on the selected role (if any)
+        const filteredUsers = roleFilter ? users.filter(user => user.role.toLowerCase() === roleFilter) : users;
+
+        // Display the filtered users
+        displayUsers(filteredUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        alert("Failed to load user data. Please try again later.");
+      }
+    }
+
+    // Function to display users in the list with pagination
+    function displayUsers(users) {
+      const userListDiv = document.getElementById("user-list");
+      userListDiv.innerHTML = ""; // Clear existing list
+
+      // If no users are found, display a message
+      if (users.length === 0) {
+        userListDiv.innerHTML = "<p>No users found.</p>";
+        return;
+      }
+
+      // Create a new list element
+      const ul = document.createElement("ul");
+      ul.classList.add("list-group");
+
+      // Display only a batch of users based on the batchSize
+      for (let i = 0; i < Math.min(batchSize, users.length); i++) {
+        const user = users[i];
+        const li = document.createElement("li");
+        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+
+        // Add user details to the list item
+        li.innerHTML = `
+      <div>
+          <strong>${user.full_name}</strong><br>
+          <small>Email: ${user.email}</small><br>
+          <small>Role: ${user.role}</small><br>
+          <small>Phone: ${user.number}</small>
+      </div>
+      <div>
+          <span class="badge ${user.is_active ? "bg-success" : "bg-danger"}">${user.is_active ? "Active" : "Inactive"}</span>
+          <span class="badge ${user.is_staff ? "bg-info" : "bg-secondary"}">${user.is_staff ? "Staff" : "Non-Staff"}</span>
+          <button class="btn btn-warning btn-sm ms-2" onclick="openEditModal(${user.id})">Edit</button>
+          <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">Delete</button>
+      </div>
+    `;
+
+        ul.appendChild(li);
+      }
+
+      userListDiv.appendChild(ul);
+
+      // If there are more users to display, show the "Show More" button
+      if (users.length > batchSize) {
+        const showMoreButton = document.createElement("button");
+        showMoreButton.classList.add("btn", "btn-primary", "mt-3");
+        showMoreButton.innerText = "Show More";
+        showMoreButton.onclick = () => showMore(users);
+        userListDiv.appendChild(showMoreButton);
+      }
+    }
+
+    // Function to show more users as the "Show More" button is clicked
+    function showMore(users) {
+      displayedUsers += batchSize; // Increase the number of displayed users
+      const remainingUsers = users.slice(displayedUsers, displayedUsers + batchSize); // Get the next batch of users
+      const ul = document.querySelector("#user-list ul");
+
+      // Add remaining users to the list
+      remainingUsers.forEach((user) => {
+        const li = document.createElement("li");
+        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+
+        li.innerHTML = `
+      <div>
+          <strong>${user.full_name}</strong><br>
+          <small>Email: ${user.email}</small><br>
+          <small>Role: ${user.role}</small><br>
+          <small>Phone: ${user.number}</small>
+      </div>
+      <div>
+          <span class="badge ${user.is_active ? "bg-success" : "bg-danger"}">${user.is_active ? "Active" : "Inactive"}</span>
+          <span class="badge ${user.is_staff ? "bg-info" : "bg-secondary"}">${user.is_staff ? "Staff" : "Non-Staff"}</span>
+          <button class="btn btn-warning btn-sm ms-2" onclick="openEditModal(${user.id})">Edit</button>
+          <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">Delete</button>
+      </div>
+    `;
+        ul.appendChild(li);
       });
 
-      /**
-       * =====================  user create model start ==========================================================
-       */
+      // If there are still more users, show the "Show More" button again
+      if (displayedUsers + batchSize < users.length) {
+        const showMoreButton = document.createElement("button");
+        showMoreButton.classList.add("btn", "btn-primary", "mt-3");
+        showMoreButton.innerText = "Show More";
+        showMoreButton.onclick = () => showMore(users);
+        document.getElementById("user-list").appendChild(showMoreButton);
+      }
+    }
 
-      /**
-       * =====================  articles data fatched start ==========================================================
-       */
-      let articlesCache = [];
-      let currentStart = 0;
-      const articlesLimit = 2;
+    // Open the modal to edit user data
+    async function openEditModal(userId) {
+      try {
+        // Fetch the user data for editing
+        const user = await apiRequest(`${apiEndpoint}${userId}/`);
+        if (user) {
+          // Populate the modal form with the user's data
+          document.getElementById("full-name").value = user.full_name;
+          document.getElementById("email-modal").value = user.email;
+          document.getElementById("number-modal").value = user.number;
+          document.getElementById("role").value = user.role;
+          document.getElementById("is-active").value = user.is_active.toString();
+          document.getElementById("is-staff").value = user.is_staff.toString();
 
-      const loadArticles = async (start = 0, limit = 5) => {
-        if (articlesCache.length > 0) {
-          displayArticles(articlesCache, start, limit);
+          // Set form submission handler to update the user
+          document.getElementById("update-form").onsubmit = (e) => {
+            e.preventDefault();
+            updateUser(userId);
+          };
+
+          // Show the modal
+          new bootstrap.Modal(document.getElementById("updateModal")).show();
+        }
+      } catch (error) {
+        console.error("Error loading user data for edit:", error);
+        alert("Failed to load user data for editing.");
+      }
+    }
+
+    // Update user data via PUT request
+    async function updateUser(userId) {
+      const updatedUser = {
+        full_name: document.getElementById("full-name").value,
+        email: document.getElementById("email-modal").value,
+        number: document.getElementById("number-modal").value,
+        role: document.getElementById("role").value,
+        is_active: document.getElementById("is-active").value === "true",
+        is_staff: document.getElementById("is-staff").value === "true",
+      };
+
+      try {
+        // Call API to update the user
+        const updatedData = await apiRequest(`${apiEndpoint}${userId}/`, 'PUT', updatedUser);
+        console.log("User updated successfully:", updatedData);
+        alert("User updated successfully!");
+        location.reload(); // Reload the page to reflect changes
+      } catch (error) {
+        console.error("Error updating user:", error);
+        alert("Failed to update user.");
+      }
+    }
+
+    // Delete user via DELETE request
+    async function deleteUser(userId) {
+      const confirmDelete = confirm("Are you sure you want to delete this user?");
+      if (confirmDelete) {
+        try {
+          // Call API to delete the user
+          await apiRequest(`${apiEndpoint}${userId}/`, 'DELETE');
+          alert("User deleted successfully");
+          fetchUsers(); // Re-fetch the user list after deletion
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          alert("Failed to delete user. Please try again.");
+        }
+      }
+    }
+
+    // Fetch and display users on page load
+    window.onload = fetchUsers;
+
+    /**
+     * =================================== user releted crud models start ============================================
+     */
+    /**
+     * ================ user create model start ==============================
+     */
+    // Utility to handle fetch requests
+
+    async function apiRequest(url, method, body = null) {
+      const accessToken = localStorage.getItem("access_token");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      const options = {
+        method: method,
+        headers: headers,
+      };
+
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Something went wrong");
+        }
+
+        return await response.json();
+      } catch (error) {
+        throw new Error(error.message || "Network error occurred");
+      }
+    }
+
+    // Create User Form Submission
+    document
+      .getElementById("create-user-form")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Collect form data
+        const email = document.getElementById("create-email").value;
+        const fullName = document.getElementById("create-full-name").value;
+        const password = document.getElementById("create-password").value;
+        const confirmPassword = document.getElementById(
+          "create-confirm-password"
+        ).value;
+        const role = document.getElementById("create-role").value;
+        const number = document.getElementById("create-number").value;
+
+        // Reset any previous error message
+        const errorMessageElement =
+          document.getElementById("create-user-error");
+        if (errorMessageElement) {
+          errorMessageElement.innerHTML = "";
+        }
+
+        // Email validation
+        const emailValidationResult = regexMail(email);
+        if (!emailValidationResult.isValid) {
+          alert(emailValidationResult.messages.join("\n"));
+          return;
+        }
+        // Validate fields before submitting
+        if (password !== confirmPassword) {
+          alert("Passwords do not match");
           return;
         }
 
-        const accessToken = localStorage.getItem("access_token");
-        const url = "/articles/";
+        const payload = {
+          email,
+          full_name: fullName,
+          password,
+          confirm_password: confirmPassword,
+          role,
+          number,
+        };
 
         try {
-          const response = await fetch(url, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-          console.log(response);
-          
-          if (!response.ok) {
-            throw new Error("Failed to fetch articles");
+          // Disable submit button and show loading state
+          const submitButton = document.getElementById("create-user-submit");
+          submitButton.disabled = true;
+          submitButton.innerText = "Creating User...";
+
+          const data = await apiRequest(
+            "/users/admin/users/",
+            "POST",
+            payload
+          );
+
+          // Save the email in localStorage (or a global variable)
+          localStorage.setItem("createdUserEmail", email);
+
+          alert("User created successfully!");
+
+          // Reset the form
+          document.getElementById("create-user-form").reset();
+
+          // Show OTP verification modal
+          const verifyOtpModal = new bootstrap.Modal(
+            document.getElementById("verifyOtpModal")
+          );
+          verifyOtpModal.show();
+
+          // Re-enable submit button
+          submitButton.disabled = false;
+          submitButton.innerText = "Create User";
+        } catch (error) {
+          // Show error message
+          const errorMessageElement =
+            document.getElementById("create-user-error");
+          if (errorMessageElement) {
+            errorMessageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
           }
 
-          articlesCache = await response.json();
-          displayArticles(articlesCache, start, limit);
-        } catch (error) {
-          console.error("Error fetching articles:", error);
+          // Re-enable submit button
+          const submitButton = document.getElementById("create-user-submit");
+          submitButton.disabled = false;
+          submitButton.innerText = "Create User";
         }
-      };
+      });
 
-      const displayArticles = (articles, start, limit) => {
-        const articlesTableBody = document.getElementById("articlesTableBody");
-        const end = Math.min(start + limit, articles.length);
+    // OTP Verification Form Submission
+    // OTP Verification Form Submission
+    document
+      .getElementById("verify-otp-form")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        for (let i = start; i < end; i++) {
-          const article = articles[i];
-          const articleRow = document.createElement("tr");
+        // Collect OTP data
+        const email = document.getElementById("otp-email").value;
+        const otp = document.getElementById("otp").value;
 
-          articleRow.innerHTML = `
+        // Validate OTP field
+        if (!otp) {
+          alert("Please enter the OTP");
+          return;
+        }
+
+        const payload = { email, otp };
+
+        try {
+          // Disable submit button and show loading state
+          const submitButton = document.getElementById("verify-otp-submit");
+          submitButton.disabled = true;
+          submitButton.innerText = "Verifying OTP...";
+
+          const data = await apiRequest(
+            "/users/register-verify-otp/",
+            "POST",
+            payload
+          );
+
+          alert("OTP verified successfully!");
+
+          // Hide OTP verification modal
+          const verifyOtpModal = bootstrap.Modal.getInstance(
+            document.getElementById("verifyOtpModal")
+          );
+          verifyOtpModal.hide();
+
+          // Re-enable submit button
+          submitButton.disabled = false;
+          submitButton.innerText = "Verify OTP";
+        } catch (error) {
+          // Show error message
+          const errorMessageElement =
+            document.getElementById("verify-otp-error");
+          if (errorMessageElement) {
+            errorMessageElement.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+          }
+
+          // Re-enable submit button
+          const submitButton = document.getElementById("verify-otp-submit");
+          submitButton.disabled = false;
+          submitButton.innerText = "Verify OTP";
+        }
+      });
+
+    // Pre-fill email field for OTP form
+    document.addEventListener("DOMContentLoaded", () => {
+      const createdUserEmail = localStorage.getItem("createdUserEmail");
+      if (createdUserEmail) {
+        document.getElementById("otp-email").value = createdUserEmail;
+      }
+    });
+
+    /**
+     * =====================  user create model end ==========================================================
+     */
+
+    /**
+     * =====================  articles data fatched start ==========================================================
+     */
+    let articlesCache = [];
+    let currentStart = 0;
+    const articlesLimit = 2;
+
+    const loadArticles = async (start = 0, limit = 5) => {
+      if (articlesCache.length > 0) {
+        displayArticles(articlesCache, start, limit);
+        return;
+      }
+
+      const accessToken = localStorage.getItem("access_token");
+      const url = "/articles/";
+
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch articles");
+        }
+
+        articlesCache = await response.json();
+        displayArticles(articlesCache, start, limit);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      }
+    };
+
+    const displayArticles = (articles, start, limit) => {
+      const articlesTableBody = document.getElementById("articlesTableBody");
+      const end = Math.min(start + limit, articles.length);
+
+      for (let i = start; i < end; i++) {
+        const article = articles[i];
+        const articleRow = document.createElement("tr");
+
+        articleRow.innerHTML = `
       <td>${article.id}</td>
       <td>${article.author_name}</td>
       <td>${article.author_email}</td>
@@ -1501,208 +1310,206 @@
       <td>${article.categories.map((c) => c.name).join(", ")}</td>
       <td>${article.tags.map((t) => t.name).join(", ")}</td>
       <td>${article.approved_at ? article.approved_at : "Not approved yet"}</td>
-      <td><img src="${
-        article.image_url ? article.image_url : ""
-      }" class="img-fluid" style="width: 100px; height: auto;"></td>
+      <td><img src="${article.image_url ? article.image_url : ""
+          }" class="img-fluid" style="width: 100px; height: auto;"></td>
       <td>
-        <button type="button" class="btn btn-warning" onclick="openAdminEditModal(${
-          article.id
-        })">
+        <button type="button" class="btn btn-warning" onclick="openAdminEditModal(${article.id
+          })">
           Edit
         </button>
       </td>
       <td>
-        <button type="button" class="btn btn-danger" onclick="deleteArticle(${
-          article.id
-        })">
+        <button type="button" class="btn btn-danger" onclick="deleteArticle(${article.id
+          })">
           Delete
         </button>
       </td>
     `;
 
-          articlesTableBody.appendChild(articleRow);
-        }
+        articlesTableBody.appendChild(articleRow);
+      }
 
-        if (end >= articles.length) {
-          document.getElementById("loadMoreBtn").style.display = "none";
-        }
-      };
+      if (end >= articles.length) {
+        document.getElementById("loadMoreBtn").style.display = "none";
+      }
+    };
 
-      const openAdminEditModal = (articleId) => {
-        const article = articlesCache.find((a) => a.id === articleId);
-        if (!article) return;
+    const openAdminEditModal = (articleId) => {
+      const article = articlesCache.find((a) => a.id === articleId);
+      if (!article) return;
 
-        // Populate form fields with article data
-        document.getElementById("articleId").value = article.id;
-        document.getElementById("articleTitle").value = article.title;
-        document.getElementById("articleStatus").value = article.status;
-        document.getElementById("articleContent").value = article.content;
-        document.getElementById("articleCategories").value = article.categories
-          .map((c) => c.name)
-          .join(", ");
-        document.getElementById("articleTags").value = article.tags
-          .map((t) => t.name)
-          .join(", ");
+      // Populate form fields with article data
+      document.getElementById("articleId").value = article.id;
+      document.getElementById("articleTitle").value = article.title;
+      document.getElementById("articleStatus").value = article.status;
+      document.getElementById("articleContent").value = article.content;
+      document.getElementById("articleCategories").value = article.categories
+        .map((c) => c.name)
+        .join(", ");
+      document.getElementById("articleTags").value = article.tags
+        .map((t) => t.name)
+        .join(", ");
 
-        // Show modal
-        const modal = new bootstrap.Modal(
-          document.getElementById("editArticleModal")
-        );
-        modal.show();
-      };
+      // Show modal
+      const modal = new bootstrap.Modal(
+        document.getElementById("editArticleModal")
+      );
+      modal.show();
+    };
 
-      // Delete article function
-      const deleteArticle = async (articleId) => {
-        const confirmation = confirm(
-          "Are you sure you want to delete this article?"
-        );
+    // Delete article function
+    const deleteArticle = async (articleId) => {
+      const confirmation = confirm(
+        "Are you sure you want to delete this article?"
+      );
 
-        if (confirmation) {
-          try {
-            const accessToken = localStorage.getItem("access_token");
-            const url = `/admins/articles/${articleId}/`;
-
-            const response = await fetch(url, {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response.ok) {
-              alert("Article deleted successfully!");
-              // Remove the article from the table
-              const articlesTableBody =
-                document.getElementById("articlesTableBody");
-              const rowToDelete = document.querySelector(
-                `tr td:first-child:contains("${articleId}")`
-              ).parentNode;
-              if (rowToDelete) {
-                rowToDelete.remove();
-              }
-            } else {
-              const errorData = await response.json();
-              console.error("Error deleting article:", errorData);
-              alert(
-                "Failed to delete article: " +
-                  (errorData.message || "Unknown error")
-              );
-            }
-          } catch (error) {
-            console.error("Error deleting article:", error);
-            alert("Error deleting article.");
-          }
-        }
-      };
-
-      // Handle Save Changes button
-      // Function to handle save changes
-      document
-        .getElementById("saveChangesBtn")
-        .addEventListener("click", async () => {
-          const articleId = document.getElementById("articleId").value; // Get article ID
-          const updatedFields = {
-            title: document.getElementById("articleTitle").value,
-            status: document.getElementById("articleStatus").value,
-            content: document.getElementById("articleContent").value,
-            categories: document
-              .getElementById("articleCategories")
-              .value.split(",") // Split categories by comma
-              .map((c) => c.trim()) // Trim each category
-              .filter((c) => c.length > 0), // Remove any empty strings
-            tags: document
-              .getElementById("articleTags")
-              .value.split(",") // Split tags by comma
-              .map((t) => t.trim()) // Trim each tag
-              .filter((t) => t.length > 0), // Remove any empty strings
-          };
-
-          // Check for missing fields
-          if (
-            !updatedFields.title ||
-            !updatedFields.status ||
-            !updatedFields.content
-          ) {
-            alert("Please fill in all the required fields.");
-            return;
-          }
-
-          // Log to check the updated fields
-          console.log("Updated Fields:", updatedFields);
-
-          // Send the update to the backend
-          try {
-            await updateArticle(articleId, updatedFields);
-          } catch (error) {
-            console.error("Error during update:", error);
-          }
-        });
-
-      // PUT request for updating article
-      const updateArticle = async (articleId, updatedFields) => {
-        const accessToken = localStorage.getItem("access_token");
-        const url = `/admins/articles/${articleId}/`;
-
-        console.log("Sending data to the backend:", updatedFields); // Debugging log
-
+      if (confirmation) {
         try {
+          const accessToken = localStorage.getItem("access_token");
+          const url = `/admins/articles/${articleId}/`;
+
           const response = await fetch(url, {
-            method: "PUT",
+            method: "DELETE",
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${accessToken}`,
             },
-            body: JSON.stringify(updatedFields), // Send updated fields
           });
 
           if (response.ok) {
-            alert("Article updated successfully!");
+            alert("Article deleted successfully!");
+            // Remove the article from the table
+            const articlesTableBody =
+              document.getElementById("articlesTableBody");
+            const rowToDelete = document.querySelector(
+              `tr td:first-child:contains("${articleId}")`
+            ).parentNode;
+            if (rowToDelete) {
+              rowToDelete.remove();
+            }
           } else {
             const errorData = await response.json();
-            console.error("Error updating article:", errorData);
+            console.error("Error deleting article:", errorData);
             alert(
-              "Failed to update article: " +
-                (errorData.message || "Unknown error")
+              "Failed to delete article: " +
+              (errorData.message || "Unknown error")
             );
           }
         } catch (error) {
-          console.error("Error updating article:", error);
-          alert("Error updating article.");
+          console.error("Error deleting article:", error);
+          alert("Error deleting article.");
         }
-      };
+      }
+    };
 
-      // Handle Delete button click
-      document
-        .getElementById("deleteArticleBtn")
-        .addEventListener("click", async () => {
-          const articleId = document.getElementById("articleId").value;
+    // Handle Save Changes button
+    // Function to handle save changes
+    document
+      .getElementById("saveChangesBtn")
+      .addEventListener("click", async () => {
+        const articleId = document.getElementById("articleId").value; // Get article ID
+        const updatedFields = {
+          title: document.getElementById("articleTitle").value,
+          status: document.getElementById("articleStatus").value,
+          content: document.getElementById("articleContent").value,
+          categories: document
+            .getElementById("articleCategories")
+            .value.split(",") // Split categories by comma
+            .map((c) => c.trim()) // Trim each category
+            .filter((c) => c.length > 0), // Remove any empty strings
+          tags: document
+            .getElementById("articleTags")
+            .value.split(",") // Split tags by comma
+            .map((t) => t.trim()) // Trim each tag
+            .filter((t) => t.length > 0), // Remove any empty strings
+        };
 
-          const updatedFields = {
-            title: "", // Optionally empty title to mark as deleted
-            content: "", // Optionally empty content to mark as deleted
-            status: "deleted", // Set status to "deleted" (or any other logic you want to handle deletion)
-          };
+        // Check for missing fields
+        if (
+          !updatedFields.title ||
+          !updatedFields.status ||
+          !updatedFields.content
+        ) {
+          alert("Please fill in all the required fields.");
+          return;
+        }
 
+        // Log to check the updated fields
+        console.log("Updated Fields:", updatedFields);
+
+        // Send the update to the backend
+        try {
           await updateArticle(articleId, updatedFields);
-
-          const modal = bootstrap.Modal.getInstance(
-            document.getElementById("editArticleModal")
-          );
-          modal.hide();
-        });
-
-      // Load the first batch of articles
-      loadArticles(currentStart, articlesLimit);
-
-      // Load more functionality
-      document.getElementById("loadMoreBtn").addEventListener("click", () => {
-        currentStart += articlesLimit;
-        loadArticles(currentStart, articlesLimit);
+        } catch (error) {
+          console.error("Error during update:", error);
+        }
       });
 
-      /**
-       * =====================  articles data fatched end ==========================================================
-       */
-    </script>
-  </body>
+    // PUT request for updating article
+    const updateArticle = async (articleId, updatedFields) => {
+      const accessToken = localStorage.getItem("access_token");
+      const url = `/admins/articles/${articleId}/`;
+
+      console.log("Sending data to the backend:", updatedFields); // Debugging log
+
+      try {
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(updatedFields), // Send updated fields
+        });
+
+        if (response.ok) {
+          alert("Article updated successfully!");
+        } else {
+          const errorData = await response.json();
+          console.error("Error updating article:", errorData);
+          alert(
+            "Failed to update article: " +
+            (errorData.message || "Unknown error")
+          );
+        }
+      } catch (error) {
+        console.error("Error updating article:", error);
+        alert("Error updating article.");
+      }
+    };
+
+    // Handle Delete button click
+    document
+      .getElementById("deleteArticleBtn")
+      .addEventListener("click", async () => {
+        const articleId = document.getElementById("articleId").value;
+
+        const updatedFields = {
+          title: "", // Optionally empty title to mark as deleted
+          content: "", // Optionally empty content to mark as deleted
+          status: "deleted", // Set status to "deleted" (or any other logic you want to handle deletion)
+        };
+
+        await updateArticle(articleId, updatedFields);
+
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("editArticleModal")
+        );
+        modal.hide();
+      });
+
+    // Load the first batch of articles
+    loadArticles(currentStart, articlesLimit);
+
+    // Load more functionality
+    document.getElementById("loadMoreBtn").addEventListener("click", () => {
+      currentStart += articlesLimit;
+      loadArticles(currentStart, articlesLimit);
+    });
+
+    /**
+     * =====================  articles data fatched end ==========================================================
+     */
+  </script>
+</body>
+
 </html>

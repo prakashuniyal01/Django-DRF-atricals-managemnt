@@ -106,49 +106,7 @@ class AdminUserView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    # def change_password(self, request, user_id):
-    #     """ Change a user's password - Admin only """
-    #     if not request.user.is_superuser:
-    #         return Response({"detail": "You are not authorized to change this user's password."}, status=status.HTTP_403_FORBIDDEN)
 
-    #     try:
-    #         user = User.objects.get(id=user_id)
-    #     except User.DoesNotExist:
-    #         return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    #     serializer = PasswordChangeSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         new_password = serializer.validated_data['new_password']
-    #         user.set_password(new_password)
-    #         user.save()
-    #         return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
-
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class ChangePasswordView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, user_id):
-#         """ Change a user's password - Admin only """
-#         if not request.user.is_superuser:
-#             return Response(
-#                 {"detail": "You are not authorized to change this user's password."},
-#                 status=status.HTTP_403_FORBIDDEN
-#             )
-
-#         try:
-#             user = User.objects.get(id=user_id)
-#         except User.DoesNotExist:
-#             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-#         serializer = PasswordChangeSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user.set_password(serializer.validated_data['new_password'])
-#             user.save()
-#             return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# user registration view
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
