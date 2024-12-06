@@ -239,6 +239,7 @@
                 /* Adjust for smaller screens */
             }
         }
+
         .profile-cart {
             position: absolute;
             top: 50px;
@@ -251,12 +252,14 @@
             display: none;
             z-index: 999;
         }
+
         .profile-cart img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             margin-right: 15px;
         }
+
         #profile-icon {
             border-radius: 50%;
             width: 40px;
@@ -269,10 +272,11 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <button class="btn btn-primary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                <button class="btn btn-primary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+                    aria-controls="sidebar">
                     <i class="bi bi-list"></i>
                 </button>
-                <h4 >Welcome, <span id="user-name"></span></h4>
+                <h4>Welcome, <span id="user-name"></span></h4>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
@@ -300,28 +304,143 @@
         </nav>
     </header>
 
-    <!-- Sidebar -->
+    <!-- Sidebar  al models  -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
         <div class="offcanvas-header">
             <h5 id="sidebarLabel">Menu</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <!-- User Details Section -->
-            <div class="user-details mb-4">
-                <img id="profile-icon" src="https://via.placeholder.com/80" alt="Profile Image" class="rounded-circle mb-2">
-                <h5 id="user-name"></h5>
-                <p id="user-email-dropdown" class="text-muted"></p>
-                <button class="btn btn-primary btn-sm" id="edit-profile-btn" data-bs-toggle="modal" data-bs-target="#profileModal">Edit Profile</button>
+            <!-- User Profile Section -->
+            <div id="user-profile" class="mb-3">
+                <h6>Welcome, <span id="user-fullname">User</span></h6>
+                <p>Email: <span id="user-email"></span></p>
+                <p>Role: <span id="user-role"></span></p>
             </div>
-    
-            <!-- Menu Items -->
             <ul class="list-group">
-                <li class="list-group-item"><a href="#">Home</a></li>
-                <li class="list-group-item"><a href="#">Articles</a></li>
-                <li class="list-group-item"><a href="#">Profile Settings</a></li>
-                <li class="list-group-item"><a href="#" id="logout-sidebar">Logout</a></li>
+                <li class="list-group-item">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile Settings</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#updateDetailsModal">Update Details</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" id="logout-sidebar">Logout</a>
+                </li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Full Name:</strong> <span id="modal-fullname"></span></p>
+                    <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                    <p><strong>Role:</strong> <span id="modal-role"></span></p>
+                    <p><strong>Number</strong> <span id="modal-number"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Details Modal -->
+    <div class="modal fade" id="updateDetailsModal" tabindex="-1" aria-labelledby="updateDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateDetailsModalLabel">
+                        Update Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="update-user-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="number" class="form-label">Phone Number</label>
+                            <input type="number" id="number" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">
+                        Change Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="change-password-form">
+                        <div class="mb-3">
+                            <label for="old-password" class="form-label">Old Password</label>
+                            <input type="password" id="old-password" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-password" class="form-label">New Password</label>
+                            <input type="password" id="new-password" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm-password" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirm-password" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- OTP Verification Modal -->
+    <div class="modal fade" id="verifyOtpModal" tabindex="-1" aria-labelledby="verifyOtpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verifyOtpModalLabel">Verify OTP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="verify-otp-form">
+                        <div class="mb-3">
+                            <label for="otp-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="otp-email" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="otp" class="form-label">OTP</label>
+                            <input type="text" class="form-control" id="otp" required />
+                        </div>
+                        <button type="submit" id="verify-otp-submit" class="btn btn-primary">
+                            Verify OTP
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -334,99 +453,464 @@
             <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
         </div>
     </main>
-        <!-- search articles  -->
-        <section class="mt-4 mb-4">
-            <div class="container">
-                <div class="search-bar text-center">
-                    <h2>Search Articles</h2>
-                    <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
-                        <input type="text" id="categories" name="categories" class="form-control me-2"
-                            placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px;">
-                        <input type="text" id="tags" name="tags" class="form-control me-2"
-                            placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px;">
-                        <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                    </form>
-                </div>
+    <!-- search articles  -->
+    <section class="mt-4 mb-4">
+        <div class="container">
+            <div class="search-bar text-center">
+                <h2>Search Articles</h2>
+                <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
+                    <input type="text" id="categories" name="categories" class="form-control me-2"
+                        placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px;">
+                    <input type="text" id="tags" name="tags" class="form-control me-2"
+                        placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px;">
+                    <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                </form>
+            </div>
 
-                <!-- Articles Section -->
-                <div id="articles" class="mt-4 row">
-                    <!-- Articles will be populated here -->
-                </div>
+            <!-- Articles Section -->
+            <div id="articles" class="mt-4 row">
+                <!-- Articles will be populated here -->
+            </div>
+        </div>
+    </section>
+
+
+
+    <main class="container my-5">
+        <section>
+            <h2 class="mb-4">Articles</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="articles-container">
+                <!-- Articles dynamically appended -->
+            </div>
+            <div class="text-center mt-4">
+                <button id="load-more" class="btn btn-primary">Load More</button>
             </div>
         </section>
-
-
-
-        <main class="container my-5">
-            <section>
-                <h2 class="mb-4">Articles</h2>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="articles-container">
-                    <!-- Articles dynamically appended -->
-                </div>
-                <div class="text-center mt-4">
-                    <button id="load-more" class="btn btn-primary">Load More</button>
-                </div>
-            </section>
-        </main>
+    </main>
     </div>
-        <!-- ======================================== footer ====================================== -->
+    <!-- ======================================== footer ====================================== -->
     <!-- Footer -->
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
-          <div class="row">
-            <!-- About Section -->
-            <div class="col-md-4">
-              <h5 class="text-uppercase">About Us</h5>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                convallis felis orci, nec sollicitudin urna pellentesque at.
-                Integer euismod pharetra metus, at efficitur nunc facilisis id.
-              </p>
+            <div class="row">
+                <!-- About Section -->
+                <div class="col-md-4">
+                    <h5 class="text-uppercase">About Us</h5>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+                        convallis felis orci, nec sollicitudin urna pellentesque at.
+                        Integer euismod pharetra metus, at efficitur nunc facilisis id.
+                    </p>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="col-md-4">
+                    <h5 class="text-uppercase">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <i class="bi bi-house-door"></i> Address: 1234 Main Street,
+                            City, Country
+                        </li>
+                        <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
+                        <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
+                    </ul>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="col-md-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <div class="d-flex">
+                        <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-facebook"></i> Facebook</a>
+                        <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-twitter"></i> Twitter</a>
+                        <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-linkedin"></i> LinkedIn</a>
+                        <a href="#" class="btn btn-outline-light"><i class="bi bi-instagram"></i> Instagram</a>
+                    </div>
+                </div>
             </div>
-  
-            <!-- Contact Section -->
-            <div class="col-md-4">
-              <h5 class="text-uppercase">Contact Us</h5>
-              <ul class="list-unstyled">
-                <li>
-                  <i class="bi bi-house-door"></i> Address: 1234 Main Street,
-                  City, Country
-                </li>
-                <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
-                <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
-              </ul>
+            <hr class="my-4 border-light" />
+            <div class="text-center">
+                <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
             </div>
-  
-            <!-- Social Media Links -->
-            <div class="col-md-4">
-              <h5 class="text-uppercase">Follow Us</h5>
-              <div class="d-flex">
-                <a href="#" class="btn btn-outline-light me-2"
-                  ><i class="bi bi-facebook"></i> Facebook</a
-                >
-                <a href="#" class="btn btn-outline-light me-2"
-                  ><i class="bi bi-twitter"></i> Twitter</a
-                >
-                <a href="#" class="btn btn-outline-light me-2"
-                  ><i class="bi bi-linkedin"></i> LinkedIn</a
-                >
-                <a href="#" class="btn btn-outline-light"
-                  ><i class="bi bi-instagram"></i> Instagram</a
-                >
-              </div>
-            </div>
-          </div>
-          <hr class="my-4 border-light" />
-          <div class="text-center">
-            <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
-          </div>
         </div>
-      </footer>
-  
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sidebar toggle functionality
- 
+
+        const accessToken = localStorage.getItem("access_token");
+
+        /**
+         * ========================= validation  ==========================
+         * email validation
+         * number number
+         * name
+         * password
+         */
+        function regexMail(email) {
+            const messages = [];
+
+            // 1. Check if input is empty
+            if (!email) {
+                messages.push("Email address cannot be empty.");
+                return { isValid: false, messages };
+            }
+
+            // 2. Format Check (basic regex)
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                messages.push("Invalid email format. Please provide a valid email.");
+            }
+
+            // 3. Length Validation
+            if (email.length > 254) {
+                messages.push("Email address is too long. Maximum length is 254 characters.");
+            }
+
+            // 4. Local part length check
+            const localPart = email.split("@")[0];
+            if (localPart.length > 64) {
+                messages.push("Local part of the email (before '@') is too long. Maximum is 64 characters.");
+            }
+
+            // 5. Check for consecutive dots
+            if (email.includes("..")) {
+                messages.push("Email address cannot contain consecutive dots ('..').");
+            }
+
+            // 6. Top-Level Domain Check
+            const domain = email.split("@")[1];
+            if (domain && !domain.includes(".")) {
+                messages.push("Email domain must contain a '.' (e.g., 'example.com').");
+            }
+
+            // 7. Valid Characters
+            const invalidCharsRegex = /[^a-zA-Z0-9._%+-@]/;
+            if (invalidCharsRegex.test(email)) {
+                messages.push("Email contains invalid characters. Only letters, numbers, '.', '_', '%', '+', and '-' are allowed.");
+            }
+
+            // 8. Optional: DNS Check (Mocked)
+            if (!domain || domain === "test.com") {
+                messages.push("Domain does not seem valid. (e.g., 'test.com' is not allowed)");
+            }
+
+            // Return results
+            const isValid = messages.length === 0;
+            if (isValid) {
+                messages.push("Email is valid!");
+            }
+            return { isValid, messages };
+        }
+        /**
+         * ============================================= side bar start ======================================
+         */
+        // Wait until the document content is fully loaded
+        document.addEventListener("DOMContentLoaded", () => {
+            // Retrieve the access token from localStorage to check if the user is authenticated
+            const accessToken = localStorage.getItem("access_token");
+
+            // If the token does not exist, redirect the user to the login page
+            if (!accessToken) {
+                redirectToLoginPage();
+            } else {
+                // If the token is present, fetch the user's data from the server
+                fetchUserData(accessToken);
+            }
+
+            // Event listener to toggle the visibility of the profile dropdown menu
+            document
+                .getElementById("profile-icon-link")
+                .addEventListener("click", toggleProfileDropdown);
+
+            // Event listeners to handle logout from both the main profile section and sidebar
+            document.getElementById("logout-btn").addEventListener("click", logout);
+            document
+                .getElementById("logout-sidebar")
+                .addEventListener("click", logout);
+
+            // Populate the sidebar and modals with user data after login
+            populateSidebarAndModals();
+
+            // Handle user update form submission for changing personal details (email and phone number)
+            handleUserUpdateForm();
+
+            // Handle password change form submission
+            handleChangePasswordForm();
+        });
+
+        // **Redirect the user to the login page**
+        function redirectToLoginPage() {
+            // Redirect to the login page if the user is not authenticated
+            window.location.href = "/users/login-page";
+        }
+
+        // **Fetch user data using the access token**
+        function fetchUserData(accessToken) {
+            // Fetch user data from the server
+            fetch("/users/user/", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Include the access token in the request headers
+                },
+            })
+                .then((response) => response.json()) // Parse the JSON response from the server
+                .then((data) => {
+                    if (data) {
+                        // If data is received, save it to localStorage and update the profile section
+                        saveUserDataToLocalStorage(data);
+                        updateProfileSection(data);
+                    } else {
+                        // If no data is received, alert the user
+                        alert("Failed to fetch user data");
+                    }
+                })
+                .catch((error) => {
+                    // If there's an error during the fetch process, log the error and alert the user
+                    console.error("Error:", error);
+                    alert("An error occurred while fetching user data.");
+                });
+        }
+
+        // **Save the fetched user data to localStorage for future use**
+        function saveUserDataToLocalStorage(data) {
+            // Store the user data as a stringified JSON object in localStorage
+            localStorage.setItem("user_data", JSON.stringify(data));
+        }
+
+        // **Update the profile section on the page with user data**
+        function updateProfileSection(data) {
+            // Update various elements on the page with the user's details (name, profile image, etc.)
+            document.getElementById("user-name").textContent = data.full_name;
+            document.getElementById("profile-icon").src =
+                data.profile_image || "https://via.placeholder.com/40";
+            document.getElementById("user-name-dropdown").textContent =
+                data.full_name;
+            document.getElementById("user-email-dropdown").textContent = data.email;
+            document.getElementById("user-phone-dropdown").textContent =
+                data.number;
+            document.getElementById("user-role-dropdown").textContent = data.role;
+        }
+
+        // **Toggle the visibility of the profile dropdown**
+        function toggleProfileDropdown() {
+            const profileCart = document.getElementById("profile-cart");
+            // Toggle the display property of the profile dropdown (show or hide)
+            profileCart.style.display =
+                profileCart.style.display === "block" ? "none" : "block";
+        }
+
+        // **Logout the user by clearing stored data and redirecting to login page**
+        function logout() {
+            // Remove user data and access token from localStorage
+            localStorage.removeItem("user_data");
+            localStorage.removeItem("access_token");
+            // Redirect the user to the login page
+            redirectToLoginPage();
+        }
+
+        // **Populate the sidebar and modals with user details**
+        function populateSidebarAndModals() {
+            // Retrieve the access token from localStorage to authenticate the request
+            const token = localStorage.getItem("access_token");
+
+            // Fetch user data to populate the sidebar and modals
+            fetch("/users/user/", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`, // Pass the access token in the request headers
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json()) // Parse the response as JSON
+                .then((data) => {
+                    if (data) {
+                        // If data is fetched successfully, update the sidebar and modal UI elements
+                        updateSidebar(data);
+                        updateModal(data);
+                        updateUpdateForm(data);
+                    }
+                })
+                .catch((error) => console.error("Error:", error)); // Log errors if the fetch fails
+        }
+
+        // **Update sidebar with user data**
+        function updateSidebar(data) {
+            // Populate sidebar with user's full name, email, and role
+            document.getElementById("user-fullname").textContent = data.full_name;
+            document.getElementById("user-email").textContent = data.email;
+            document.getElementById("user-role").textContent = data.role;
+        }
+
+        // **Update modal with user data**
+        function updateModal(data) {
+            // Populate the modal with user's full name, email, role, and phone number
+            document.getElementById("modal-fullname").textContent = data.full_name;
+            document.getElementById("modal-email").textContent = data.email;
+            document.getElementById("modal-role").textContent = data.role;
+            document.getElementById("modal-number").textContent = data.number;
+        }
+
+        // **Populate the update form with the user's current data**
+        function updateUpdateForm(data) {
+            // Pre-fill the form fields with user's current email and phone number
+            document.getElementById("email").value = data.email;
+            document.getElementById("number").value = data.number || ""; // Default to an empty string if the phone number is null
+        }
+
+        // **Handle the user update form submission (for email and phone number updates)**
+        function handleUserUpdateForm() {
+            // Listen for the form submission
+            document
+                .getElementById("update-user-form")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault(); // Prevent the default form submission behavior
+
+                    // Get the user ID from localStorage to update the correct user data
+                    const userId = JSON.parse(localStorage.getItem("user_data")).id;
+                    const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic API endpoint based on user ID
+
+                    // Collect the form data (email and phone number)
+                    const userData = {
+                        email: document.getElementById("email").value,
+                        number: document.getElementById("number").value,
+                    };
+
+                    // Send a PUT request to update the user's details on the server
+                    updateUserDetails(updateApiUrl, userData);
+                });
+        }
+
+        // **Send the PUT request to update the user's details**
+        function updateUserDetails(updateApiUrl, userData) {
+            // Retrieve the access token from localStorage for authentication
+            const token = localStorage.getItem("access_token");
+
+            // Send the PUT request to the API to update the user's data
+            fetch(updateApiUrl, {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData), // Send the updated user data in the request body
+            })
+                .then((response) => response.json()) // Parse the JSON response
+                .then(() => {
+                    // Show an alert and reload the page after a successful update
+                    alert("Details updated successfully!");
+                    window.location.reload(); // Refresh the page to reflect changes
+                })
+                .catch((error) => {
+                    console.error("Error:", error); // Log any errors
+                    alert("An error occurred while updating the details."); // Show an error message
+                });
+        }
+
+        // **Handle password change form submission**
+        function handleChangePasswordForm() {
+            // Listen for the form submission
+            document
+                .getElementById("change-password-form")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault(); // Prevent the default form submission behavior
+
+                    // Collect the password change data (old password, new password, confirm new password)
+                    const passwordData = {
+                        old_password: document.getElementById("old-password").value,
+                        new_password: document.getElementById("new-password").value,
+                        confirm_password:
+                            document.getElementById("confirm-password").value,
+                    };
+
+                    // Send the password change request if the data is valid
+                    changePassword(passwordData);
+                });
+        }
+
+        // **Send the password change request to the server**
+        // **Send the password change request to the server**
+        function changePassword(passwordData) {
+            const token = localStorage.getItem("access_token");
+            const apiUrl = "/users/change-password/";
+
+            // **Validate the password data**
+            function validatePasswordData(passwordData) {
+                const { old_password, new_password, confirm_password } = passwordData;
+
+                // Check if any of the fields are empty
+                if (!old_password || !new_password || !confirm_password) {
+                    alert("All fields are required.");
+                    return false;
+                }
+
+                // Check if the new password and confirm password match
+                if (new_password !== confirm_password) {
+                    alert("New password and confirm password do not match.");
+                    return false;
+                }
+
+                // Check the strength of the new password (example: at least 8 characters, one uppercase, one number)
+                const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+                if (!passwordStrengthRegex.test(new_password)) {
+                    alert(
+                        "New password must be at least 8 characters long, include one uppercase letter and one number."
+                    );
+                    return false;
+                }
+
+                // If all checks pass, return true
+                return true;
+            }
+
+            // Validate the password data before sending the request
+            if (validatePasswordData(passwordData)) {
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(passwordData), // Send the password data in the request body
+                })
+                    .then((response) => {
+                        // Check if the response is ok (status 200-299)
+                        if (!response.ok) {
+                            return response.json().then((data) => {
+                                throw new Error(data.detail || "Failed to change password.");
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        // Check if the response contains errors (validation errors from the server)
+                        if (data.errors) {
+                            let errorMessage = "";
+                            // Loop through all errors and create a message string
+                            for (const key in data.errors) {
+                                if (data.errors.hasOwnProperty(key)) {
+                                    errorMessage += `${key}: ${data.errors[key].join(", ")}\n`;
+                                }
+                            }
+                            alert(errorMessage || "Password changed successfully!");
+                        } else {
+                            // If no validation errors, show a success message
+                            alert(data.detail || "Password changed successfully!");
+                        }
+
+                        // Reset the form after success
+                        document.getElementById("change-password-form").reset();
+                    })
+                    .catch((error) => {
+                        // Display any unexpected errors in an alert
+                        alert(error.message || "An unknown error occurred.");
+                    });
+            }
+        }
+
+        /**
+         * ============================================= side bar end ======================================
+         */
 
         // search 
         document.addEventListener("DOMContentLoaded", function () {
@@ -524,24 +1008,24 @@
                         'Authorization': `Bearer ${accessToken}`,
                     },
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        localStorage.setItem('user_data', JSON.stringify(data));
-                        document.getElementById('user-name').textContent = data.full_name;
-                        document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
-                        document.getElementById('user-name-dropdown').textContent = data.full_name;
-                        document.getElementById('user-email-dropdown').textContent = data.email;
-                        document.getElementById('user-phone-dropdown').textContent = data.number;
-                        document.getElementById('user-role-dropdown').textContent = data.role;
-                    } else {
-                        alert('Failed to fetch user data');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while fetching user data.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            localStorage.setItem('user_data', JSON.stringify(data));
+                            document.getElementById('user-name').textContent = data.full_name;
+                            document.getElementById('profile-icon').src = data.profile_image || 'https://via.placeholder.com/40';
+                            document.getElementById('user-name-dropdown').textContent = data.full_name;
+                            document.getElementById('user-email-dropdown').textContent = data.email;
+                            document.getElementById('user-phone-dropdown').textContent = data.number;
+                            document.getElementById('user-role-dropdown').textContent = data.role;
+                        } else {
+                            alert('Failed to fetch user data');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while fetching user data.');
+                    });
             }
 
             document.getElementById('profile-icon-link').addEventListener('click', () => {

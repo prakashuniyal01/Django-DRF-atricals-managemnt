@@ -89,7 +89,7 @@
     </nav>
   </header>
 
-  <!-- Sidebar -->
+  <!-- Sidebar  al models  -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
     <div class="offcanvas-header">
       <h5 id="sidebarLabel">Menu</h5>
@@ -116,14 +116,62 @@
           <a href="#" data-bs-toggle="modal" data-bs-target="#createUserModal">Create User</a>
         </li>
         <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#createArticleModal">Create Article</a>
+        </li>
+        <li class="list-group-item">
           <a href="#" id="logout-sidebar">Logout</a>
         </li>
       </ul>
     </div>
   </div>
 
-  <!-- Modals -->
-
+  <!-- Modals create article -->
+  <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createArticleModalLabel">
+            Create Article
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createArticleForm">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" required />
+            </div>
+            <div class="mb-3">
+              <label for="subtitle" class="form-label">Subtitle</label>
+              <input type="text" class="form-control" id="subtitle" required />
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">Content</label>
+              <textarea class="form-control" id="content" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="categories" class="form-label">Categories</label>
+              <input type="text" class="form-control" id="categories"
+                placeholder="Comma-separated (e.g., technology, cloud)" required />
+            </div>
+            <div class="mb-3">
+              <label for="tags" class="form-label">Tags</label>
+              <input type="text" class="form-control" id="tags"
+                placeholder="Comma-separated (e.g., cloud computing, IT)" required />
+            </div>
+            <div class="mb-3">
+              <label for="image" class="form-label">Image</label>
+              <input type="file" class="form-control" id="image" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Create Article
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Profile Modal -->
   <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -789,40 +837,145 @@
     }
 
     // **Send the password change request to the server**
-    function changePassword(passwordData) {
-      const token = localStorage.getItem("access_token");
-      const apiUrl = "/users/change-password/";
+  function changePassword(passwordData) {
+        const token = localStorage.getItem("access_token");
+        const apiUrl = "/users/change-password/";
 
-      // Validate the password data before sending the request
-      if (validatePasswordData(passwordData)) {
-        fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(passwordData), // Send the password data in the request body
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.json().then((data) => {
-                throw new Error(data.detail || "Failed to change password.");
-              });
-            }
-            return response.json();
+        // **Validate the password data**
+        function validatePasswordData(passwordData) {
+          const { old_password, new_password, confirm_password } = passwordData;
+
+          // Check if any of the fields are empty
+          if (!old_password || !new_password || !confirm_password) {
+            alert("All fields are required.");
+            return false;
+          }
+
+          // Check if the new password and confirm password match
+          if (new_password !== confirm_password) {
+            alert("New password and confirm password do not match.");
+            return false;
+          }
+
+          // Check the strength of the new password (example: at least 8 characters, one uppercase, one number)
+          const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+          if (!passwordStrengthRegex.test(new_password)) {
+            alert(
+              "New password must be at least 8 characters long, include one uppercase letter and one number."
+            );
+            return false;
+          }
+
+          // If all checks pass, return true
+          return true;
+        }
+
+        // Validate the password data before sending the request
+        if (validatePasswordData(passwordData)) {
+          fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(passwordData), // Send the password data in the request body
           })
-          .then(() => {
-            // Show a success message and reset the password form
-            alert("Password changed successfully!");
-            document.getElementById("change-password-form").reset();
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert(error.message || "An unknown error occurred.");
-          });
+            .then((response) => {
+              // Check if the response is ok (status 200-299)
+              if (!response.ok) {
+                return response.json().then((data) => {
+                  throw new Error(data.detail || "Failed to change password.");
+                });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              // Check if the response contains errors (validation errors from the server)
+              if (data.errors) {
+                let errorMessage = "";
+                // Loop through all errors and create a message string
+                for (const key in data.errors) {
+                  if (data.errors.hasOwnProperty(key)) {
+                    errorMessage += `${key}: ${data.errors[key].join(", ")}\n`;
+                  }
+                }
+                alert(errorMessage || "Password changed successfully!");
+              } else {
+                // If no validation errors, show a success message
+                alert(data.detail || "Password changed successfully!");
+              }
+
+              // Reset the form after success
+              document.getElementById("change-password-form").reset();
+            })
+            .catch((error) => {
+              // Display any unexpected errors in an alert
+              alert(error.message || "An unknown error occurred.");
+            });
+        }
       }
-    }
+    // create article model
+    document.addEventListener("DOMContentLoaded", () => {
+      const createArticleForm = document.getElementById("createArticleForm");
 
+      createArticleForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const subtitle = document.getElementById("subtitle").value;
+        const content = document.getElementById("content").value;
+        const categories = document
+          .getElementById("categories")
+          .value.split(",")
+          .map((item) => item.trim());
+        const tags = document
+          .getElementById("tags")
+          .value.split(",")
+          .map((item) => item.trim());
+        const imageFile = document.getElementById("image").files[0]; // Get image file
+
+        // Prepare JSON payload
+        const payload = {
+          title,
+          subtitle,
+          content,
+          categories,
+          tags,
+          image: null, // Default to null for now
+        };
+
+        if (imageFile) {
+          // If image is uploaded, handle image upload (future implementation)
+          alert("Image upload functionality will be added later.");
+        }
+
+        const accessToken = localStorage.getItem("access_token");
+
+        try {
+          const response = await fetch("/articles/", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (response.ok) {
+            alert("Article created successfully!");
+            window.location.reload(); // Reload to update articles list
+          } else {
+            const errorData = await response.json();
+            alert(
+              `Error: ${errorData.message || "Failed to create article."}`
+            );
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred.");
+        }
+      });
+    });
     /**
      * ============================================= side bar end ======================================
      */

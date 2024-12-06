@@ -26,7 +26,7 @@ urlpatterns = [
     path('register-page/', TemplateView.as_view(template_name='register.html'), name='register'),
     
     path('dashboard/admin/', TemplateView.as_view(template_name='dashboard/admin.html'),  name='user-detail'),
-    path('dashboard/editor/', TemplateView.as_view(template_name='dashboard/editor.html'),  name='user-detail'),
+    path('dashboard/editor/', TemplateView.as_view(template_name='dashboard/editor.html'), name='dashboard-editor'),
     path('dashboard/journalist/', TemplateView.as_view(template_name='dashboard/journalist.html'),  name='user-detail'),
     
     # Make sure this path is correct for user dashboard

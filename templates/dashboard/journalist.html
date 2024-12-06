@@ -1,604 +1,995 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Juornalist Dashboard</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .profile-cart {
-        position: absolute;
-        top: 50px;
-        right: 10px;
-        width: 300px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        display: none;
-        z-index: 999;
-      }
-      .profile-cart img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 15px;
-      }
-      #profile-icon {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <button
-            class="btn btn-primary me-3"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#sidebar"
-            aria-controls="sidebar"
-          >
-            <i class="bi bi-list"></i>
-          </button>
-          <h4>Welcome, <span id="user-name"></span></h4>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-              <li class="nav-item">
-                <a class="nav-link" href="/articles">Articles</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" id="profile-icon-link">
-                  <img
-                    src="https://via.placeholder.com/40"
-                    id="profile-icon"
-                    alt="Profile Icon"
-                  />
-                </a>
-                <div class="profile-cart" id="profile-cart">
-                  <div class="profile-header">
-                    <img
-                      src="https://via.placeholder.com/50"
-                      id="profile-image"
-                      alt="Profile Image"
-                    />
-                    <h5 id="user-name-dropdown"></h5>
-                  </div>
-                  <ul class="profile-details">
-                    <li>
-                      <span>Email:</span> <span id="user-email-dropdown"></span>
-                    </li>
-                    <li>
-                      <span>Phone:</span> <span id="user-phone-dropdown"></span>
-                    </li>
-                    <li>
-                      <span>Role:</span> <span id="user-role-dropdown"></span>
-                    </li>
-                  </ul>
-                  <button class="btn btn-danger btn-logout" id="logout-btn">
-                    Logout
-                  </button>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
 
-    <!-- Sidebar -->
-    <div
-      class="offcanvas offcanvas-start"
-      tabindex="-1"
-      id="sidebar"
-      aria-labelledby="sidebarLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 id="sidebarLabel">Menu</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <ul class="list-group">
-          <li class="list-group-item"><a href="#">Home</a></li>
-          <li class="list-group-item"><a href="#">Articles</a></li>
-          <li class="list-group-item"><a href="#">Profile</a></li>
-          <li class="list-group-item">
-            <a
-              href="#"
-              data-bs-toggle="modal"
-              data-bs-target="#createArticleModal"
-              >Create Article</a
-            >
-          </li>
-          <li class="list-group-item">
-            <a href="#" id="logout-sidebar">Logout</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-<!-- model -->
-<div
-class="modal fade"
-id="createArticleModal"
-tabindex="-1"
-aria-labelledby="createArticleModalLabel"
-aria-hidden="true"
->
-<div class="modal-dialog modal-lg">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="createArticleModalLabel">
-        Create Article
-      </h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <form id="createArticleForm">
-        <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
-          <input type="text" class="form-control" id="title" required />
-        </div>
-        <div class="mb-3">
-          <label for="subtitle" class="form-label">Subtitle</label>
-          <input
-            type="text"
-            class="form-control"
-            id="subtitle"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="content" class="form-label">Content</label>
-          <textarea
-            class="form-control"
-            id="content"
-            rows="5"
-            required
-          ></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="categories" class="form-label">Categories</label>
-          <input
-            type="text"
-            class="form-control"
-            id="categories"
-            placeholder="Comma-separated (e.g., technology, cloud)"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="tags" class="form-label">Tags</label>
-          <input
-            type="text"
-            class="form-control"
-            id="tags"
-            placeholder="Comma-separated (e.g., cloud computing, IT)"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="image" class="form-label">Image</label>
-          <input type="file" class="form-control" id="image" />
-        </div>
-        <button type="submit" class="btn btn-primary">
-          Create Article
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juornalist Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    rel="stylesheet" />
+  <style>
+    .profile-cart {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      width: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      display: none;
+      z-index: 999;
+    }
+
+    .profile-cart img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    #profile-icon {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <button class="btn btn-primary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+          aria-controls="sidebar">
+          <i class="bi bi-list"></i>
         </button>
-      </form>
+        <h4>Welcome, <span id="user-name"></span></h4>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="/articles">Articles</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="profile-icon-link">
+                <img src="https://via.placeholder.com/40" id="profile-icon" alt="Profile Icon" />
+              </a>
+              <div class="profile-cart" id="profile-cart">
+                <div class="profile-header">
+                  <img src="https://via.placeholder.com/50" id="profile-image" alt="Profile Image" />
+                  <h5 id="user-name-dropdown"></h5>
+                </div>
+                <ul class="profile-details">
+                  <li>
+                    <span>Email:</span> <span id="user-email-dropdown"></span>
+                  </li>
+                  <li>
+                    <span>Phone:</span> <span id="user-phone-dropdown"></span>
+                  </li>
+                  <li>
+                    <span>Role:</span> <span id="user-role-dropdown"></span>
+                  </li>
+                </ul>
+                <button class="btn btn-danger btn-logout" id="logout-btn">
+                  Logout
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Sidebar  al models  -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header">
+      <h5 id="sidebarLabel">Menu</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- User Profile Section -->
+      <div id="user-profile" class="mb-3">
+        <h6>Welcome, <span id="user-fullname">User</span></h6>
+        <p>Email: <span id="user-email"></span></p>
+        <p>Role: <span id="user-role"></span></p>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile Settings</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#updateDetailsModal">Update Details</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#createArticleModal">Create Article</a>
+        </li>
+        <li class="list-group-item">
+          <a href="#" id="logout-sidebar">Logout</a>
+        </li>
+      </ul>
     </div>
   </div>
-</div>
-</div>
 
-    <!-- Dashboard Content -->
-    <main class="mt-4 container dashboard-container">
-      <div
-        class="banner text-center p-5"
-        style="
-          background: url('https://via.placeholder.com/1200x400') no-repeat
-            center/cover;
-          color: #fff;
-        "
-      >
-        <h1>Welcome</h1>
-        <p class="lead">Discover, read, and manage articles seamlessly.</p>
-        <a href="#articles-container" class="btn btn-primary btn-lg"
-          >Explore Articles</a
-        >
-      </div>
-    </main>
-
-    <!-- search articles  -->
-    <section class="mt-4 mb-4">
-      <div class="container">
-        <div class="search-bar text-center">
-          <h2>Search Articles</h2>
-          <form
-            method="GET"
-            action="/search/"
-            class="d-flex justify-content-center mt-3"
-          >
-            <input
-              type="text"
-              id="categories"
-              name="categories"
-              class="form-control me-2"
-              placeholder="Enter categories (e.g., Tech, Education)"
-              style="max-width: 400px"
-            />
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              class="form-control me-2"
-              placeholder="Enter tags (e.g., AI, Blockchain)"
-              style="max-width: 400px"
-            />
-            <button type="button" class="btn btn-primary" id="searchBtn">
-              Search
+  <!-- Modals create article -->
+  <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createArticleModalLabel">
+            Create Article
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="createArticleForm">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" required />
+            </div>
+            <div class="mb-3">
+              <label for="subtitle" class="form-label">Subtitle</label>
+              <input type="text" class="form-control" id="subtitle" required />
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label">Content</label>
+              <textarea class="form-control" id="content" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="categories" class="form-label">Categories</label>
+              <input type="text" class="form-control" id="categories"
+                placeholder="Comma-separated (e.g., technology, cloud)" required />
+            </div>
+            <div class="mb-3">
+              <label for="tags" class="form-label">Tags</label>
+              <input type="text" class="form-control" id="tags"
+                placeholder="Comma-separated (e.g., cloud computing, IT)" required />
+            </div>
+            <div class="mb-3">
+              <label for="image" class="form-label">Image</label>
+              <input type="file" class="form-control" id="image" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Create Article
             </button>
           </form>
         </div>
-
-        <!-- Articles Section -->
-        <div id="articles" class="mt-4 row">
-          <!-- Articles will be populated here -->
+      </div>
+    </div>
+  </div>
+  <!-- Profile Modal -->
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="profileModalLabel">Profile Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Full Name:</strong> <span id="modal-fullname"></span></p>
+          <p><strong>Email:</strong> <span id="modal-email"></span></p>
+          <p><strong>Role:</strong> <span id="modal-role"></span></p>
+          <p><strong>Number</strong> <span id="modal-number"></span></p>
         </div>
       </div>
-    </section>
-    <!-- render in data -->
-    <main class="container mt-5">
-      <h1>Articles</h1>
-      <div id="articles-container" class="row">
-        <!-- Cards will be injected here -->
-      </div>
-    </main>
+    </div>
+  </div>
 
-        <!-- ======================================== footer ====================================== -->
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-      <div class="container">
-        <div class="row">
-          <!-- About Section -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">About Us</h5>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-              convallis felis orci, nec sollicitudin urna pellentesque at.
-              Integer euismod pharetra metus, at efficitur nunc facilisis id.
-            </p>
-          </div>
-
-          <!-- Contact Section -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">Contact Us</h5>
-            <ul class="list-unstyled">
-              <li>
-                <i class="bi bi-house-door"></i> Address: 1234 Main Street,
-                City, Country
-              </li>
-              <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
-              <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
-            </ul>
-          </div>
-
-          <!-- Social Media Links -->
-          <div class="col-md-4">
-            <h5 class="text-uppercase">Follow Us</h5>
-            <div class="d-flex">
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-facebook"></i> Facebook</a
-              >
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-twitter"></i> Twitter</a
-              >
-              <a href="#" class="btn btn-outline-light me-2"
-                ><i class="bi bi-linkedin"></i> LinkedIn</a
-              >
-              <a href="#" class="btn btn-outline-light"
-                ><i class="bi bi-instagram"></i> Instagram</a
-              >
+  <!-- Update Details Modal -->
+  <div class="modal fade" id="updateDetailsModal" tabindex="-1" aria-labelledby="updateDetailsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateDetailsModalLabel">
+            Update Details
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="update-user-form">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" required />
             </div>
-          </div>
-        </div>
-        <hr class="my-4 border-light" />
-        <div class="text-center">
-          <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
+            <div class="mb-3">
+              <label for="number" class="form-label">Phone Number</label>
+              <input type="number" id="number" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Save Changes
+            </button>
+          </form>
         </div>
       </div>
-    </footer>
+    </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">
+            Change Password
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="change-password-form">
+            <div class="mb-3">
+              <label for="old-password" class="form-label">Old Password</label>
+              <input type="password" id="old-password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="new-password" class="form-label">New Password</label>
+              <input type="password" id="new-password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="confirm-password" class="form-label">Confirm Password</label>
+              <input type="password" id="confirm-password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Change Password
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- OTP Verification Modal -->
+  <div class="modal fade" id="verifyOtpModal" tabindex="-1" aria-labelledby="verifyOtpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="verifyOtpModalLabel">Verify OTP</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="verify-otp-form">
+            <div class="mb-3">
+              <label for="otp-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="otp-email" required />
+            </div>
+            <div class="mb-3">
+              <label for="otp" class="form-label">OTP</label>
+              <input type="text" class="form-control" id="otp" required />
+            </div>
+            <button type="submit" id="verify-otp-submit" class="btn btn-primary">
+              Verify OTP
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      // login 
-      document.addEventListener("DOMContentLoaded", () => {
+  <!-- Dashboard Content -->
+  <main class="mt-4 container dashboard-container">
+    <div class="banner text-center p-5" style="
+          background: url('https://via.placeholder.com/1200x400') no-repeat
+            center/cover;
+          color: #fff;
+        ">
+      <h1>Welcome</h1>
+      <p class="lead">Discover, read, and manage articles seamlessly.</p>
+      <a href="#articles-container" class="btn btn-primary btn-lg">Explore Articles</a>
+    </div>
+  </main>
+
+  <!-- search articles  -->
+  <section class="mt-4 mb-4">
+    <div class="container">
+      <div class="search-bar text-center">
+        <h2>Search Articles</h2>
+        <form method="GET" action="/search/" class="d-flex justify-content-center mt-3">
+          <input type="text" id="categorie" name="categories" class="form-control me-2"
+            placeholder="Enter categories (e.g., Tech, Education)" style="max-width: 400px" />
+          <input type="text" id="tag" name="tags" class="form-control me-2"
+            placeholder="Enter tags (e.g., AI, Blockchain)" style="max-width: 400px" />
+          <button type="button" class="btn btn-primary" id="searchBtn">
+            Search
+          </button>
+        </form>
+      </div>
+
+      <!-- Articles Section -->
+      <div id="articles" class="mt-4 row">
+        <!-- Articles will be populated here -->
+      </div>
+    </div>
+  </section>
+  <!-- render in data -->
+  <main class="container mt-5">
+    <h1>Articles</h1>
+    <div id="articles-container" class="row">
+      <!-- Cards will be injected here -->
+    </div>
+  </main>
+
+  <!-- ======================================== footer ====================================== -->
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <!-- About Section -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">About Us</h5>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+            convallis felis orci, nec sollicitudin urna pellentesque at.
+            Integer euismod pharetra metus, at efficitur nunc facilisis id.
+          </p>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">Contact Us</h5>
+          <ul class="list-unstyled">
+            <li>
+              <i class="bi bi-house-door"></i> Address: 1234 Main Street,
+              City, Country
+            </li>
+            <li><i class="bi bi-phone"></i> Phone: +123 456 7890</li>
+            <li><i class="bi bi-envelope"></i> Email: contact@example.com</li>
+          </ul>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="col-md-4">
+          <h5 class="text-uppercase">Follow Us</h5>
+          <div class="d-flex">
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-facebook"></i> Facebook</a>
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-twitter"></i> Twitter</a>
+            <a href="#" class="btn btn-outline-light me-2"><i class="bi bi-linkedin"></i> LinkedIn</a>
+            <a href="#" class="btn btn-outline-light"><i class="bi bi-instagram"></i> Instagram</a>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4 border-light" />
+      <div class="text-center">
+        <p>&copy; 2024 Your Website Name. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    // login 
+    document.addEventListener("DOMContentLoaded", () => {
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        window.location.href = "/users/login-page";
+      } else {
+        fetch("/users/user/", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              localStorage.setItem("user_data", JSON.stringify(data));
+              document.getElementById("user-name").textContent =
+                data.full_name;
+              document.getElementById("profile-icon").src =
+                data.profile_image || "https://via.placeholder.com/40";
+              document.getElementById("user-name-dropdown").textContent =
+                data.full_name;
+              document.getElementById("user-email-dropdown").textContent =
+                data.email;
+              document.getElementById("user-phone-dropdown").textContent =
+                data.number;
+              document.getElementById("user-role-dropdown").textContent =
+                data.role;
+            } else {
+              alert("Failed to fetch user data");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while fetching user data.");
+          });
+      }
+
+      document
+        .getElementById("profile-icon-link")
+        .addEventListener("click", () => {
+          const profileCart = document.getElementById("profile-cart");
+          profileCart.style.display =
+            profileCart.style.display === "block" ? "none" : "block";
+        });
+
+      document.getElementById("logout-btn").addEventListener("click", logout);
+      document
+        .getElementById("logout-sidebar")
+        .addEventListener("click", logout);
+
+      function logout() {
+        localStorage.removeItem("user_data");
+        localStorage.removeItem("access_token");
+        window.location.href = "/users/login-page";
+      }
+    });
+
+    const accessToken = localStorage.getItem("access_token");
+
+    /**
+     * ========================= validation  ==========================
+     * email validation
+     * number number
+     * name
+     * password
+     */
+    function regexMail(email) {
+      const messages = [];
+
+      // 1. Check if input is empty
+      if (!email) {
+        messages.push("Email address cannot be empty.");
+        return { isValid: false, messages };
+      }
+
+      // 2. Format Check (basic regex)
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        messages.push("Invalid email format. Please provide a valid email.");
+      }
+
+      // 3. Length Validation
+      if (email.length > 254) {
+        messages.push("Email address is too long. Maximum length is 254 characters.");
+      }
+
+      // 4. Local part length check
+      const localPart = email.split("@")[0];
+      if (localPart.length > 64) {
+        messages.push("Local part of the email (before '@') is too long. Maximum is 64 characters.");
+      }
+
+      // 5. Check for consecutive dots
+      if (email.includes("..")) {
+        messages.push("Email address cannot contain consecutive dots ('..').");
+      }
+
+      // 6. Top-Level Domain Check
+      const domain = email.split("@")[1];
+      if (domain && !domain.includes(".")) {
+        messages.push("Email domain must contain a '.' (e.g., 'example.com').");
+      }
+
+      // 7. Valid Characters
+      const invalidCharsRegex = /[^a-zA-Z0-9._%+-@]/;
+      if (invalidCharsRegex.test(email)) {
+        messages.push("Email contains invalid characters. Only letters, numbers, '.', '_', '%', '+', and '-' are allowed.");
+      }
+
+      // 8. Optional: DNS Check (Mocked)
+      if (!domain || domain === "test.com") {
+        messages.push("Domain does not seem valid. (e.g., 'test.com' is not allowed)");
+      }
+
+      // Return results
+      const isValid = messages.length === 0;
+      if (isValid) {
+        messages.push("Email is valid!");
+      }
+      return { isValid, messages };
+    }
+    /**
+     * ============================================= side bar start ======================================
+     */
+    // Wait until the document content is fully loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      // Retrieve the access token from localStorage to check if the user is authenticated
+      const accessToken = localStorage.getItem("access_token");
+
+      // If the token does not exist, redirect the user to the login page
+      if (!accessToken) {
+        redirectToLoginPage();
+      } else {
+        // If the token is present, fetch the user's data from the server
+        fetchUserData(accessToken);
+      }
+
+      // Event listener to toggle the visibility of the profile dropdown menu
+      document
+        .getElementById("profile-icon-link")
+        .addEventListener("click", toggleProfileDropdown);
+
+      // Event listeners to handle logout from both the main profile section and sidebar
+      document.getElementById("logout-btn").addEventListener("click", logout);
+      document
+        .getElementById("logout-sidebar")
+        .addEventListener("click", logout);
+
+      // Populate the sidebar and modals with user data after login
+      populateSidebarAndModals();
+
+      // Handle user update form submission for changing personal details (email and phone number)
+      handleUserUpdateForm();
+
+      // Handle password change form submission
+      handleChangePasswordForm();
+    });
+
+    // **Redirect the user to the login page**
+    function redirectToLoginPage() {
+      // Redirect to the login page if the user is not authenticated
+      window.location.href = "/users/login-page";
+    }
+
+    // **Fetch user data using the access token**
+    function fetchUserData(accessToken) {
+      // Fetch user data from the server
+      fetch("/users/user/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the access token in the request headers
+        },
+      })
+        .then((response) => response.json()) // Parse the JSON response from the server
+        .then((data) => {
+          if (data) {
+            // If data is received, save it to localStorage and update the profile section
+            saveUserDataToLocalStorage(data);
+            updateProfileSection(data);
+          } else {
+            // If no data is received, alert the user
+            alert("Failed to fetch user data");
+          }
+        })
+        .catch((error) => {
+          // If there's an error during the fetch process, log the error and alert the user
+          console.error("Error:", error);
+          alert("An error occurred while fetching user data.");
+        });
+    }
+
+    // **Save the fetched user data to localStorage for future use**
+    function saveUserDataToLocalStorage(data) {
+      // Store the user data as a stringified JSON object in localStorage
+      localStorage.setItem("user_data", JSON.stringify(data));
+    }
+
+    // **Update the profile section on the page with user data**
+    function updateProfileSection(data) {
+      // Update various elements on the page with the user's details (name, profile image, etc.)
+      document.getElementById("user-name").textContent = data.full_name;
+      document.getElementById("profile-icon").src =
+        data.profile_image || "https://via.placeholder.com/40";
+      document.getElementById("user-name-dropdown").textContent =
+        data.full_name;
+      document.getElementById("user-email-dropdown").textContent = data.email;
+      document.getElementById("user-phone-dropdown").textContent =
+        data.number;
+      document.getElementById("user-role-dropdown").textContent = data.role;
+    }
+
+    // **Toggle the visibility of the profile dropdown**
+    function toggleProfileDropdown() {
+      const profileCart = document.getElementById("profile-cart");
+      // Toggle the display property of the profile dropdown (show or hide)
+      profileCart.style.display =
+        profileCart.style.display === "block" ? "none" : "block";
+    }
+
+    // **Logout the user by clearing stored data and redirecting to login page**
+    function logout() {
+      // Remove user data and access token from localStorage
+      localStorage.removeItem("user_data");
+      localStorage.removeItem("access_token");
+      // Redirect the user to the login page
+      redirectToLoginPage();
+    }
+
+    // **Populate the sidebar and modals with user details**
+    function populateSidebarAndModals() {
+      // Retrieve the access token from localStorage to authenticate the request
+      const token = localStorage.getItem("access_token");
+
+      // Fetch user data to populate the sidebar and modals
+      fetch("/users/user/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass the access token in the request headers
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json()) // Parse the response as JSON
+        .then((data) => {
+          if (data) {
+            // If data is fetched successfully, update the sidebar and modal UI elements
+            updateSidebar(data);
+            updateModal(data);
+            updateUpdateForm(data);
+          }
+        })
+        .catch((error) => console.error("Error:", error)); // Log errors if the fetch fails
+    }
+
+    // **Update sidebar with user data**
+    function updateSidebar(data) {
+      // Populate sidebar with user's full name, email, and role
+      document.getElementById("user-fullname").textContent = data.full_name;
+      document.getElementById("user-email").textContent = data.email;
+      document.getElementById("user-role").textContent = data.role;
+    }
+
+    // **Update modal with user data**
+    function updateModal(data) {
+      // Populate the modal with user's full name, email, role, and phone number
+      document.getElementById("modal-fullname").textContent = data.full_name;
+      document.getElementById("modal-email").textContent = data.email;
+      document.getElementById("modal-role").textContent = data.role;
+      document.getElementById("modal-number").textContent = data.number;
+    }
+
+    // **Populate the update form with the user's current data**
+    function updateUpdateForm(data) {
+      // Pre-fill the form fields with user's current email and phone number
+      document.getElementById("email").value = data.email;
+      document.getElementById("number").value = data.number || ""; // Default to an empty string if the phone number is null
+    }
+
+    // **Handle the user update form submission (for email and phone number updates)**
+    function handleUserUpdateForm() {
+      // Listen for the form submission
+      document
+        .getElementById("update-user-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent the default form submission behavior
+
+          // Get the user ID from localStorage to update the correct user data
+          const userId = JSON.parse(localStorage.getItem("user_data")).id;
+          const updateApiUrl = `/users/user/${userId}/update/`; // Dynamic API endpoint based on user ID
+
+          // Collect the form data (email and phone number)
+          const userData = {
+            email: document.getElementById("email").value,
+            number: document.getElementById("number").value,
+          };
+
+          // Send a PUT request to update the user's details on the server
+          updateUserDetails(updateApiUrl, userData);
+        });
+    }
+
+    // **Send the PUT request to update the user's details**
+    function updateUserDetails(updateApiUrl, userData) {
+      // Retrieve the access token from localStorage for authentication
+      const token = localStorage.getItem("access_token");
+
+      // Send the PUT request to the API to update the user's data
+      fetch(updateApiUrl, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData), // Send the updated user data in the request body
+      })
+        .then((response) => response.json()) // Parse the JSON response
+        .then(() => {
+          // Show an alert and reload the page after a successful update
+          alert("Details updated successfully!");
+          window.location.reload(); // Refresh the page to reflect changes
+        })
+        .catch((error) => {
+          console.error("Error:", error); // Log any errors
+          alert("An error occurred while updating the details."); // Show an error message
+        });
+    }
+
+    // **Handle password change form submission**
+    function handleChangePasswordForm() {
+      // Listen for the form submission
+      document
+        .getElementById("change-password-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent the default form submission behavior
+
+          // Collect the password change data (old password, new password, confirm new password)
+          const passwordData = {
+            old_password: document.getElementById("old-password").value,
+            new_password: document.getElementById("new-password").value,
+            confirm_password:
+              document.getElementById("confirm-password").value,
+          };
+
+          // Send the password change request if the data is valid
+          changePassword(passwordData);
+        });
+    }
+
+    // **Send the password change request to the server**
+    // **Send the password change request to the server**
+    function changePassword(passwordData) {
+      const token = localStorage.getItem("access_token");
+      const apiUrl = "/users/change-password/";
+
+      // **Validate the password data**
+      function validatePasswordData(passwordData) {
+        const { old_password, new_password, confirm_password } = passwordData;
+
+        // Check if any of the fields are empty
+        if (!old_password || !new_password || !confirm_password) {
+          alert("All fields are required.");
+          return false;
+        }
+
+        // Check if the new password and confirm password match
+        if (new_password !== confirm_password) {
+          alert("New password and confirm password do not match.");
+          return false;
+        }
+
+        // Check the strength of the new password (example: at least 8 characters, one uppercase, one number)
+        const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordStrengthRegex.test(new_password)) {
+          alert(
+            "New password must be at least 8 characters long, include one uppercase letter and one number."
+          );
+          return false;
+        }
+
+        // If all checks pass, return true
+        return true;
+      }
+
+      // Validate the password data before sending the request
+      if (validatePasswordData(passwordData)) {
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(passwordData), // Send the password data in the request body
+        })
+          .then((response) => {
+            // Check if the response is ok (status 200-299)
+            if (!response.ok) {
+              return response.json().then((data) => {
+                throw new Error(data.detail || "Failed to change password.");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Check if the response contains errors (validation errors from the server)
+            if (data.errors) {
+              let errorMessage = "";
+              // Loop through all errors and create a message string
+              for (const key in data.errors) {
+                if (data.errors.hasOwnProperty(key)) {
+                  errorMessage += `${key}: ${data.errors[key].join(", ")}\n`;
+                }
+              }
+              alert(errorMessage || "Password changed successfully!");
+            } else {
+              // If no validation errors, show a success message
+              alert(data.detail || "Password changed successfully!");
+            }
+
+            // Reset the form after success
+            document.getElementById("change-password-form").reset();
+          })
+          .catch((error) => {
+            // Display any unexpected errors in an alert
+            alert(error.message || "An unknown error occurred.");
+          });
+      }
+    }
+    // create article model
+    document.addEventListener("DOMContentLoaded", () => {
+      const createArticleForm = document.getElementById("createArticleForm");
+
+      createArticleForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const subtitle = document.getElementById("subtitle").value;
+        const content = document.getElementById("content").value;
+        const categories = document
+          .getElementById("categories")
+          .value.split(",")
+          .map((item) => item.trim());
+        const tags = document
+          .getElementById("tags")
+          .value.split(",")
+          .map((item) => item.trim());
+        const imageFile = document.getElementById("image").files[0]; // Get image file
+
+        // Prepare JSON payload
+        const payload = {
+          title,
+          subtitle,
+          content,
+          categories,
+          tags,
+          image: null, // Default to null for now
+        };
+
+        if (imageFile) {
+          // If image is uploaded, handle image upload (future implementation)
+          alert("Image upload functionality will be added later.");
+        }
+
         const accessToken = localStorage.getItem("access_token");
-        if (!accessToken) {
-          window.location.href = "/users/login-page";
-        } else {
-          fetch("/users/user/", {
+
+        try {
+          const response = await fetch("/articles/", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (response.ok) {
+            alert("Article created successfully!");
+            window.location.reload(); // Reload to update articles list
+          } else {
+            const errorData = await response.json();
+            alert(
+              `Error: ${errorData.message || "Failed to create article."}`
+            );
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred.");
+        }
+      });
+    });
+    /**
+     * ============================================= side bar end ======================================
+     */
+    // fetch
+    document.addEventListener("DOMContentLoaded", () => {
+      const articlesContainer = document.getElementById("articles-container");
+      const accessToken = localStorage.getItem("access_token");
+
+      // Fetch articles
+      async function fetchArticles() {
+        try {
+          const response = await fetch("/articles/", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data) {
-                localStorage.setItem("user_data", JSON.stringify(data));
-                document.getElementById("user-name").textContent =
-                  data.full_name;
-                document.getElementById("profile-icon").src =
-                  data.profile_image || "https://via.placeholder.com/40";
-                document.getElementById("user-name-dropdown").textContent =
-                  data.full_name;
-                document.getElementById("user-email-dropdown").textContent =
-                  data.email;
-                document.getElementById("user-phone-dropdown").textContent =
-                  data.number;
-                document.getElementById("user-role-dropdown").textContent =
-                  data.role;
-              } else {
-                alert("Failed to fetch user data");
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert("An error occurred while fetching user data.");
-            });
-        }
-
-        document
-          .getElementById("profile-icon-link")
-          .addEventListener("click", () => {
-            const profileCart = document.getElementById("profile-cart");
-            profileCart.style.display =
-              profileCart.style.display === "block" ? "none" : "block";
           });
 
-        document.getElementById("logout-btn").addEventListener("click", logout);
-        document
-          .getElementById("logout-sidebar")
-          .addEventListener("click", logout);
-
-        function logout() {
-          localStorage.removeItem("user_data");
-          localStorage.removeItem("access_token");
-          window.location.href = "/users/login-page";
+          if (response.ok) {
+            const articles = await response.json();
+            displayArticles(articles);
+          } else {
+            alert("Failed to fetch articles.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred while fetching articles.");
         }
-      });
-      
-      // create
-      document.addEventListener("DOMContentLoaded", () => {
-        const createArticleForm = document.getElementById("createArticleForm");
+      }
 
-        createArticleForm.addEventListener("submit", async (event) => {
-          event.preventDefault();
+      // Display articles as cards
+      function displayArticles(articles) {
+        articlesContainer.innerHTML = "";
+        articles.forEach((article) => {
+          const comments = article.comments.length
+            ? `<ul>${article.comments
+              .map(
+                (comment) =>
+                  `<li>${comment.content || "No comment text"}</li>`
+              )
+              .join("")}</ul>`
+            : "<p>No comments yet.</p>";
 
-          const title = document.getElementById("title").value;
-          const subtitle = document.getElementById("subtitle").value;
-          const content = document.getElementById("content").value;
-          const categories = document
-            .getElementById("categories")
-            .value.split(",")
-            .map((item) => item.trim());
-          const tags = document
-            .getElementById("tags")
-            .value.split(",")
-            .map((item) => item.trim());
-          const imageFile = document.getElementById("image").files[0]; // Get image file
+          const likes = article.likes || 0;
 
-          // Prepare JSON payload
-          const payload = {
-            title,
-            subtitle,
-            content,
-            categories,
-            tags,
-            image: null, // Default to null for now
-          };
-
-          if (imageFile) {
-            // If image is uploaded, handle image upload (future implementation)
-            alert("Image upload functionality will be added later.");
-          }
-
-          const accessToken = localStorage.getItem("access_token");
-
-          try {
-            const response = await fetch("/articles/", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-            });
-
-            if (response.ok) {
-              alert("Article created successfully!");
-              window.location.reload(); // Reload to update articles list
-            } else {
-              const errorData = await response.json();
-              alert(
-                `Error: ${errorData.message || "Failed to create article."}`
-              );
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An unexpected error occurred.");
-          }
-        });
-      });
-
-      // fetch
-      document.addEventListener("DOMContentLoaded", () => {
-        const articlesContainer = document.getElementById("articles-container");
-        const accessToken = localStorage.getItem("access_token");
-
-        // Fetch articles
-        async function fetchArticles() {
-          try {
-            const response = await fetch("/articles/", {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response.ok) {
-              const articles = await response.json();
-              displayArticles(articles);
-            } else {
-              alert("Failed to fetch articles.");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An unexpected error occurred while fetching articles.");
-          }
-        }
-
-        // Display articles as cards
-        function displayArticles(articles) {
-          articlesContainer.innerHTML = "";
-          articles.forEach((article) => {
-            const comments = article.comments.length
-              ? `<ul>${article.comments
-                  .map(
-                    (comment) =>
-                      `<li>${comment.content || "No comment text"}</li>`
-                  )
-                  .join("")}</ul>`
-              : "<p>No comments yet.</p>";
-
-            const likes = article.likes || 0;
-
-            const card = document.createElement("div");
-            card.className = "col-md-4 mb-4";
-            card.innerHTML = `
+          const card = document.createElement("div");
+          card.className = "col-md-4 mb-4";
+          card.innerHTML = `
                 <div class="card">
-                    <img src="${
-                      article.image_url || "https://via.placeholder.com/300"
-                    }" 
+                    <img src="${article.image_url || "https://via.placeholder.com/300"
+            }" 
                          class="card-img-top" alt="Article Image" 
                          style="width: 300px; height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">${article.title}</h5>
-                        <p class="card-subtitle text-muted">${
-                          article.subtitle
-                        }</p>
+                        <p class="card-subtitle text-muted">${article.subtitle
+            }</p>
                         <p class="card-text">${article.content.substring(
-                          0,
-                          100
-                        )}...</p>
+              0,
+              100
+            )}...</p>
                         <p><strong>Status:</strong> ${article.status}</p>
-                        <p><strong>Author:</strong> ${article.author_name} (${
-              article.author_email
+                        <p><strong>Author:</strong> ${article.author_name} (${article.author_email
             })</p>
                         <p><strong>Likes:</strong> ${likes}</p>
                         <p><strong>Comments:</strong></p>
                         ${comments}
-                        <button class="btn btn-primary btn-sm" onclick="editArticle(${
-                          article.id
-                        })">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteArticle(${
-                          article.id
-                        })">Delete</button>
-                        <button class="btn btn-info btn-sm" onclick="readArticle(${
-                          article.id
-                        })">Read</button>
+                        <button class="btn btn-primary btn-sm" onclick="editArticle(${article.id
+            })">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteArticle(${article.id
+            })">Delete</button>
+                        <button class="btn btn-info btn-sm" onclick="readArticle(${article.id
+            })">Read</button>
                     </div>
                 </div>
             `;
-            articlesContainer.appendChild(card);
+          articlesContainer.appendChild(card);
+        });
+      }
+
+      // Read Article - Show Full Article in Modal
+      window.readArticle = async function (articleId) {
+        try {
+          const response = await fetch(`/articles/${articleId}/`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           });
-        }
 
-        // Read Article - Show Full Article in Modal
-        window.readArticle = async function (articleId) {
-          try {
-            const response = await fetch(`/articles/${articleId}/`, {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            });
-
-            if (response.ok) {
-              const article = await response.json();
-              showArticleModal(article);
-            } else {
-              alert("Failed to load article details.");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert(
-              "An unexpected error occurred while loading article details."
-            );
+          if (response.ok) {
+            const article = await response.json();
+            showArticleModal(article);
+          } else {
+            alert("Failed to load article details.");
           }
-        };
+        } catch (error) {
+          console.error("Error:", error);
+          alert(
+            "An unexpected error occurred while loading article details."
+          );
+        }
+      };
 
-        // Show Article Modal
-        function showArticleModal(article) {
-          const modalContent = `
+      // Show Article Modal
+      function showArticleModal(article) {
+        const modalContent = `
             <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="articleModalLabel">${
-                              article.title
-                            }</h5>
+                            <h5 class="modal-title" id="articleModalLabel">${article.title
+          }</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <img src="${
-                              article.image_url ||
-                              "https://via.placeholder.com/600"
-                            }" class="img-fluid mb-3" alt="Article Image">
-                            <h6><strong>Subtitle:</strong> ${
-                              article.subtitle
-                            }</h6>
+                            <img src="${article.image_url ||
+          "https://via.placeholder.com/600"
+          }" class="img-fluid mb-3" alt="Article Image">
+                            <h6><strong>Subtitle:</strong> ${article.subtitle
+          }</h6>
                             <p>${article.content}</p>
                             <p><strong>Status:</strong> ${article.status}</p>
-                            <p><strong>Author:</strong> ${
-                              article.author_name
-                            } (${article.author_email})</p>
+                            <p><strong>Author:</strong> ${article.author_name
+          } (${article.author_email})</p>
                             <p><strong>Likes:</strong> ${article.likes || 0}</p>
                             <p><strong>Comments:</strong></p>
-                            ${
-                              article.comments.length
-                                ? `<ul>${article.comments
-                                    .map(
-                                      (comment) =>
-                                        `<li>${
-                                          comment.content || "No comment text"
-                                        }</li>`
-                                    )
-                                    .join("")}</ul>`
-                                : "<p>No comments yet.</p>"
-                            }
+                            ${article.comments.length
+            ? `<ul>${article.comments
+              .map(
+                (comment) =>
+                  `<li>${comment.content || "No comment text"
+                  }</li>`
+              )
+              .join("")}</ul>`
+            : "<p>No comments yet.</p>"
+          }
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -608,69 +999,69 @@ aria-hidden="true"
             </div>
         `;
 
-          // Inject modal into the body and show it
-          document.body.insertAdjacentHTML("beforeend", modalContent);
-          const modal = new bootstrap.Modal(
-            document.getElementById("articleModal")
-          );
-          modal.show();
+        // Inject modal into the body and show it
+        document.body.insertAdjacentHTML("beforeend", modalContent);
+        const modal = new bootstrap.Modal(
+          document.getElementById("articleModal")
+        );
+        modal.show();
 
-          // Remove modal from DOM after it is closed
-          document
-            .getElementById("articleModal")
-            .addEventListener("hidden.bs.modal", () => {
-              document.getElementById("articleModal").remove();
-            });
+        // Remove modal from DOM after it is closed
+        document
+          .getElementById("articleModal")
+          .addEventListener("hidden.bs.modal", () => {
+            document.getElementById("articleModal").remove();
+          });
+      }
+
+      // Fetch articles on load
+      fetchArticles();
+    });
+
+    window.editContent = async function (articleId) {
+      const currentContent = document.getElementById(
+        `content-${articleId}`
+      ).textContent;
+
+      const newContent = prompt("Edit Content:", currentContent);
+      if (newContent && newContent !== currentContent) {
+        try {
+          const response = await fetch(`/article/${articleId}/`, {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ content: newContent }),
+          });
+
+          if (response.ok) {
+            alert("Content updated successfully.");
+            fetchArticles(); // Refresh the articles list
+          } else {
+            alert("Failed to update content.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while updating content.");
         }
+      }
+    };
 
-        // Fetch articles on load
-        fetchArticles();
+    window.updateArticle = async function (articleId) {
+      // Fetch article details for pre-filling the form
+      const response = await fetch(`/article/${articleId}/`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
-      window.editContent = async function (articleId) {
-        const currentContent = document.getElementById(
-          `content-${articleId}`
-        ).textContent;
+      if (response.ok) {
+        const article = await response.json();
 
-        const newContent = prompt("Edit Content:", currentContent);
-        if (newContent && newContent !== currentContent) {
-          try {
-            const response = await fetch(`/article/${articleId}/`, {
-              method: "PATCH",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ content: newContent }),
-            });
-
-            if (response.ok) {
-              alert("Content updated successfully.");
-              fetchArticles(); // Refresh the articles list
-            } else {
-              alert("Failed to update content.");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred while updating content.");
-          }
-        }
-      };
-
-      window.updateArticle = async function (articleId) {
-        // Fetch article details for pre-filling the form
-        const response = await fetch(`/article/${articleId}/`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        if (response.ok) {
-          const article = await response.json();
-
-          // Populate and show modal
-          const modalContent = `
+        // Populate and show modal
+        const modalContent = `
             <div class="modal" tabindex="-1" id="update-modal">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -702,141 +1093,141 @@ aria-hidden="true"
                 </div>
             </div>
         `;
-          document.body.insertAdjacentHTML("beforeend", modalContent);
-          const modal = new bootstrap.Modal(
-            document.getElementById("update-modal")
-          );
-          modal.show();
+        document.body.insertAdjacentHTML("beforeend", modalContent);
+        const modal = new bootstrap.Modal(
+          document.getElementById("update-modal")
+        );
+        modal.show();
+      } else {
+        alert("Failed to fetch article details.");
+      }
+    };
+
+    window.saveUpdatedArticle = async function (articleId) {
+      const title = document.getElementById("title").value;
+      const subtitle = document.getElementById("subtitle").value;
+      const content = document.getElementById("content").value;
+
+      try {
+        const response = await fetch(`/article/${articleId}/`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, subtitle, content }),
+        });
+
+        if (response.ok) {
+          alert("Article updated successfully.");
+          document.getElementById("update-modal").remove();
+          fetchArticles(); // Refresh the articles list
         } else {
-          alert("Failed to fetch article details.");
+          alert("Failed to update article.");
         }
-      };
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while updating the article.");
+      }
+    };
 
-      window.saveUpdatedArticle = async function (articleId) {
-        const title = document.getElementById("title").value;
-        const subtitle = document.getElementById("subtitle").value;
-        const content = document.getElementById("content").value;
-
+    // Edit Article
+    async function editArticle(articleId) {
+      const newTitle = prompt("Enter new title:");
+      if (newTitle) {
         try {
           const response = await fetch(`/article/${articleId}/`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title, subtitle, content }),
+            body: JSON.stringify({ title: newTitle }),
           });
 
           if (response.ok) {
-            alert("Article updated successfully.");
-            document.getElementById("update-modal").remove();
-            fetchArticles(); // Refresh the articles list
+            alert("Article updated successfully!");
+            location.reload(); // Reload articles
           } else {
             alert("Failed to update article.");
           }
         } catch (error) {
           console.error("Error:", error);
-          alert("An error occurred while updating the article.");
-        }
-      };
-
-      // Edit Article
-      async function editArticle(articleId) {
-        const newTitle = prompt("Enter new title:");
-        if (newTitle) {
-          try {
-            const response = await fetch(`/article/${articleId}/`, {
-              method: "PATCH",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ title: newTitle }),
-            });
-
-            if (response.ok) {
-              alert("Article updated successfully!");
-              location.reload(); // Reload articles
-            } else {
-              alert("Failed to update article.");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An unexpected error occurred while editing the article.");
-          }
+          alert("An unexpected error occurred while editing the article.");
         }
       }
+    }
 
-      // Delete Article
-      window.deleteArticle = async function (articleId) {
-        if (confirm("Are you sure you want to delete this article?")) {
-          try {
-            const response = await fetch(`/article/${articleId}/`, {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              },
-            });
+    // Delete Article
+    window.deleteArticle = async function (articleId) {
+      if (confirm("Are you sure you want to delete this article?")) {
+        try {
+          const response = await fetch(`/article/${articleId}/`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          });
 
-            if (response.ok) {
-              alert("Article deleted successfully!");
-              location.reload(); // Reload articles
-            } else {
-              alert("Failed to delete article.");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An unexpected error occurred while deleting the article.");
+          if (response.ok) {
+            alert("Article deleted successfully!");
+            location.reload(); // Reload articles
+          } else {
+            alert("Failed to delete article.");
           }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred while deleting the article.");
         }
-      };
+      }
+    };
 
-      // search 
-      document.addEventListener("DOMContentLoaded", function () {
-            const searchBtn = document.getElementById("searchBtn");
-            const categoriesInput = document.getElementById("categorie");
-            const tagsInput = document.getElementById("tags");
-            const articlesDiv = document.getElementById("articles");
+    // search 
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchBtn = document.getElementById("searchBtn");
+      const categoriesInput = document.getElementById("categorie");
+      const tagsInput = document.getElementById("tag");
+      const articlesDiv = document.getElementById("articles");
 
-            // Debounce function
-            function debounce(fn, delay) {
-                let timer;
-                return function () {
-                    const context = this;
-                    const args = arguments;
-                    clearTimeout(timer);
-                    timer = setTimeout(() => fn.apply(context, args), delay);
-                };
+      // Debounce function
+      function debounce(fn, delay) {
+        let timer;
+        return function () {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(() => fn.apply(context, args), delay);
+        };
+      }
+
+      // Fetch and display articles
+      function fetchArticles() {
+        const categories = categoriesInput.value.trim();
+        const tags = tagsInput.value.trim();
+
+        const url = `/articles/search/?categories=${encodeURIComponent(categories)}&tags=${encodeURIComponent(tags)}`;
+
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              renderArticles(data);
+            } else {
+              articlesDiv.innerHTML = "<p>No articles found.</p>";
             }
+          })
+          .catch(error => {
+            console.error("Error fetching articles:", error);
+            articlesDiv.innerHTML = "<p>Error loading articles.</p>";
+          });
+      }
 
-            // Fetch and display articles
-            function fetchArticles() {
-                const categories = categoriesInput.value.trim();
-                const tags = tagsInput.value.trim();
-
-                const url = `/articles/search/?categories=${encodeURIComponent(categories)}&tags=${encodeURIComponent(tags)}`;
-
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            renderArticles(data);
-                        } else {
-                            articlesDiv.innerHTML = "<p>No articles found.</p>";
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error fetching articles:", error);
-                        articlesDiv.innerHTML = "<p>Error loading articles.</p>";
-                    });
-            }
-
-            // Render articles to the DOM
-            function renderArticles(articles) {
-                console.log(articles);
-                articlesDiv.innerHTML = ''; // Clear previous results
-                articles.forEach(article => {
-                    const articleHtml = `
+      // Render articles to the DOM
+      function renderArticles(articles) {
+        console.log(articles);
+        articlesDiv.innerHTML = ''; // Clear previous results
+        articles.forEach(article => {
+          const articleHtml = `
                 <div class="col">
                     <div class="card h-100">
                         <img src="${article.image_url}" alt="${article.title}" class="img-fluid">
@@ -855,26 +1246,27 @@ aria-hidden="true"
                     </div>
                 </div>
             `;
-                    articlesDiv.innerHTML += articleHtml;
-                });
-            }
-
-
-            // Event listeners
-            searchBtn.addEventListener("click", debounce(fetchArticles, 500));
-
-            // Optional: Listen for Enter key press to trigger search
-            categoriesInput.addEventListener("keypress", function (event) {
-                if (event.key === "Enter") {
-                    debounce(fetchArticles, 500)();
-                }
-            });
-            tagsInput.addEventListener("keypress", function (event) {
-                if (event.key === "Enter") {
-                    debounce(fetchArticles, 500)();
-                }
-            });
+          articlesDiv.innerHTML += articleHtml;
         });
-    </script>
-  </body>
+      }
+
+
+      // Event listeners
+      searchBtn.addEventListener("click", debounce(fetchArticles, 500));
+
+      // Optional: Listen for Enter key press to trigger search
+      categoriesInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          debounce(fetchArticles, 500)();
+        }
+      });
+      tagsInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          debounce(fetchArticles, 500)();
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>
